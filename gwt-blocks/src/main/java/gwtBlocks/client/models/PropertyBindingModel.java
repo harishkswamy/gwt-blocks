@@ -33,9 +33,8 @@ public abstract class PropertyBindingModel extends InputModel implements Binding
 
     public void parentValueChanged()
     {
-        BeanBindingModel beanModel = (BeanBindingModel) getParent();
-
-        if (beanModel.getValue() == null)
+        // Parent == Bean Model
+        if (getParent().getValue() == null)
             setValue(null);
         else
             setValue(getPropertyValue());
@@ -57,6 +56,7 @@ public abstract class PropertyBindingModel extends InputModel implements Binding
      */
     public void commit()
     {
+        // Parent == Bean Model
         if (getParent().getValue() != null)
             setPropertyValue();
     }
