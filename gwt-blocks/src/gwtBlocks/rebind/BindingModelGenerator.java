@@ -36,7 +36,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
     {
         _propertyModelTemplate = getTemplate("propertyModel.ftl");
 
-        String domainTypeName = getMetaData("cvg.domain.class-name", 0, 0);
+        String domainTypeName = getMetaData("gwt-blocks.domain.class-name", 0, 0);
 
         JClassType domainClass = getType(domainTypeName);
         List propertyGetters = getPropertyGetters(_genClass, domainClass);
@@ -132,7 +132,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
 
     private String getPropertyPath(JMethod method)
     {
-        String[][] metaData = method.getMetaData("cvg.domain.property-path");
+        String[][] metaData = method.getMetaData("gwt-blocks.domain.property-path");
 
         if (metaData.length > 0)
             return metaData[0][0];
