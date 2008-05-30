@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-
-<project name="gwt-blocks" basedir=".">
-    <import file="../cvg-gwt-lib/cvg-gwt-build.xml" />
-</project>
