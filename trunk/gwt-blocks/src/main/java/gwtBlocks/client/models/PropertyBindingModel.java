@@ -1,7 +1,5 @@
 package gwtBlocks.client.models;
 
-import gwtBlocks.rebind.BindingModelGenerator;
-
 /**
  * This model binds a single value held in this model to a single property in the domain object held by the contained
  * bean model.
