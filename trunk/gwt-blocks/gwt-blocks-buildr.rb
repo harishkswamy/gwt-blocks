@@ -5,6 +5,9 @@ module GwtBlocksProject
   NAME    = 'gwt-blocks'
   VERSION = '1.0.0'
   
+  GWT_BLOCKS_CLIENT_LIB = "#{GROUP}:#{NAME}:jar:client:#{VERSION}"
+  GWT_BLOCKS_SERVER_LIB = "#{GROUP}:#{NAME}:jar:server:#{VERSION}"
+
   ORACLE      = 'com.oracle:ojdbc14:jar:10.2.0.4'
   GWT_USER    = 'com.google.gwt:gwt-user:jar:1.4.10'
   GWT_WINDOWS = 'com.google.gwt:gwt-dev:jar:windows:1.4.10'
@@ -42,6 +45,7 @@ module GwtBlocksProject
   def client_deps
     return @client_deps if defined? @client_deps
     @client_deps = [GWT_USER, GWT_WINDOWS]
+    @client_deps << GWT_BLOCKS_CLIENT_LIB if project.name != NAME
     @client_deps
   end
 
@@ -59,6 +63,7 @@ module GwtBlocksProject
 
     source_deps << client_deps
     source_deps << [GWT_SERVLET, FREEMARKER]
+    source_deps << GWT_BLOCKS_SERVER_LIB if project.name != NAME
 
     yield if block_given?
 	end
