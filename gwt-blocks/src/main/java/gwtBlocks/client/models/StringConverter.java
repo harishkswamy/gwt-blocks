@@ -13,9 +13,11 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
-import gwtBlocks.client.ValidationException;
+import gwtBlocks.client.ConvertionException;
 
-public interface Validator<T>
+public interface StringConverter<T>
 {
-    void validate(ValidatableModel<T> value) throws ValidationException;
+    T getValue(String value) throws ConvertionException;
+
+    String getString(T value);
 }

@@ -1,3 +1,16 @@
+// Copyright 2008 Harish Krishnaswamy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package gwtBlocks.client.models;
 
 import gwtBlocks.client.ValidationException;
@@ -17,7 +30,7 @@ import java.util.Iterator;
  * <ul>
  * <li>The model class must declare a no args constructor.</li>
  * <li>The model class must declare the binding domain object type via the javadoc tag
- * <code>-@gwt-blocks.domain.class-name</code>
+ * <code>-@cvg.domain.class-name</code>
  * <li>The binding domain class must declare a no args constructor.</li>
  * <li>The model class must declare the properties to be bound as abstract getter methods with "Model" appended to the
  * getter name and must return {@link PropertyBindingModel}. For example <code>public abstract PropertyBindingModel 
@@ -31,11 +44,11 @@ import java.util.Iterator;
  * 
  * @author hkrishna
  */
-public abstract class BeanBindingModel extends CompositeModel implements BindingModel
+public abstract class BeanBindingModel<V> extends CompositeModel<V> implements BindingModel
 {
     private interface Task
     {
-        void execute(PropertyBindingModel model);
+        void execute(PropertyBindingModel<?> model);
     }
 
     private boolean _autoCommit;
@@ -51,7 +64,7 @@ public abstract class BeanBindingModel extends CompositeModel implements Binding
 
         doForEachChild(new Task()
         {
-            public void execute(PropertyBindingModel model)
+            public void execute(PropertyBindingModel<?> model)
             {
                 model.setAutoCommit(_autoCommit);
             }
@@ -68,7 +81,7 @@ public abstract class BeanBindingModel extends CompositeModel implements Binding
 
         doForEachChild(new Task()
         {
-            public void execute(PropertyBindingModel model)
+            public void execute(PropertyBindingModel<?> model)
             {
                 model.commit();
             }
@@ -77,17 +90,17 @@ public abstract class BeanBindingModel extends CompositeModel implements Binding
 
     private void doForEachChild(Task task)
     {
-        Iterator itr = getChildIterator();
+        Iterator<ComposableModel> itr = getChildIterator();
 
         if (itr == null)
             return;
 
         while (itr.hasNext())
         {
-            ComposableModel model = (ComposableModel) itr.next();
+            ComposableModel model = itr.next();
 
             if (model instanceof PropertyBindingModel)
-                task.execute((PropertyBindingModel) model);
+                task.execute((PropertyBindingModel<?>) model);
         }
     }
 

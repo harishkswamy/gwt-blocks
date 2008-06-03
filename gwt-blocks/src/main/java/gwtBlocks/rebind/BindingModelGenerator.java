@@ -1,3 +1,16 @@
+// Copyright 2008 Harish Krishnaswamy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package gwtBlocks.rebind;
 
 import freemarker.template.Template;
@@ -6,7 +19,6 @@ import gwtBlocks.client.Converters;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +36,12 @@ public class BindingModelGenerator extends AbstractClassGenerator
 
     protected void addImports(ClassSourceFileComposerFactory composerFactory)
     {
-        composerFactory.addImport("gwtBlocks.client.Converters");
-        composerFactory.addImport("gwtBlocks.client.ValidationException");
-        composerFactory.addImport("gwtBlocks.client.models.BeanBindingModel");
-        composerFactory.addImport("gwtBlocks.client.models.MessageModel");
+        //        composerFactory.addImport("gwtBlocks.client.Converters");
+        //        composerFactory.addImport("gwtBlocks.client.ValidationException");
+        //        composerFactory.addImport("gwtBlocks.client.models.BeanBindingModel");
+        //        composerFactory.addImport("gwtBlocks.client.models.MessageModel");
+        //        composerFactory.addImport("gwtBlocks.client.models.ValueModel");
         composerFactory.addImport("gwtBlocks.client.models.PropertyBindingModel");
-        composerFactory.addImport("gwtBlocks.client.models.ValueModel");
     }
 
     protected void generateSource(String packageName, String genClassName) throws Exception
@@ -39,11 +51,10 @@ public class BindingModelGenerator extends AbstractClassGenerator
         String domainTypeName = getMetaData("gwt-blocks.domain.class-name", 0, 0);
 
         JClassType domainClass = getType(domainTypeName);
-        List propertyGetters = getPropertyGetters(_genClass, domainClass);
+        List<Object[]> propertyGetters = getPropertyGetters(_genClass, domainClass);
 
-        for (Iterator itr = propertyGetters.iterator(); itr.hasNext();)
+        for (Object[] getterProps : propertyGetters)
         {
-            Object[] getterProps = (Object[]) itr.next();
             JMethod getter = (JMethod) getterProps[0];
             String propertyPath = (String) getterProps[1];
             String propModelGetterName = (String) getterProps[2];
@@ -54,7 +65,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
     private void generatePropertyBindingSource(JMethod domainGetter, String propertyPath, String propModelGetterName,
         String domainTypeName) throws Exception
     {
-        Map root = new HashMap();
+        Map<String, String> root = new HashMap<String, String>();
 
         String propertyName = domainGetter.getName().replaceFirst("get", "");
         String propertyTypeName = domainGetter.getReturnType().getQualifiedSourceName();
@@ -63,6 +74,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
         root.put("propertyName", propertyName);
         root.put("propertyTypeName", propertyTypeName);
         root.put("domainTypeName", domainTypeName);
+        root.put("domainModelTypeName", _genClass.getName());
         root.put("converterName", getConverterName(propertyTypeName));
 
         StringWriter out = new StringWriter();
@@ -85,9 +97,10 @@ public class BindingModelGenerator extends AbstractClassGenerator
      *         </ol>
      * @throws UnableToCompleteException
      */
-    private List getPropertyGetters(JClassType modelClass, JClassType domainClass) throws UnableToCompleteException
+    private List<Object[]> getPropertyGetters(JClassType modelClass, JClassType domainClass)
+        throws UnableToCompleteException
     {
-        List getters = new ArrayList();
+        List<Object[]> getters = new ArrayList<Object[]>();
         JMethod[] methods = modelClass.getMethods();
         JType[] nullArg = new JType[0];
 
