@@ -1,9 +1,21 @@
+// Copyright 2008 Harish Krishnaswamy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package gwtBlocks.client.models;
 
 import gwtBlocks.client.ValidationException;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -11,23 +23,23 @@ import java.util.Set;
  * 
  * @author hkrishna
  */
-public class ValidatableModel extends FeedbackModel
+public class ValidatableModel<V> extends FeedbackModel<V>
 {
-    private Set _validators;
+    private Set<Validator<V>> _validators;
 
-    public void addValidator(Validator validator)
+    public void addValidator(Validator<V> validator)
     {
         if (_validators == null)
-            _validators = new HashSet();
-        
+            _validators = new HashSet<Validator<V>>();
+
         _validators.add(validator);
-        
+
         // Validate current value in the model
         if (getMessageModel() != null)
             validate(validator);
     }
 
-    public void removeValidator(Validator validator)
+    public void removeValidator(Validator<V> validator)
     {
         if (_validators == null)
             return;
@@ -46,11 +58,11 @@ public class ValidatableModel extends FeedbackModel
             return;
 
         // Validate
-        for (Iterator itr = _validators.iterator(); itr.hasNext();)
-            validate((Validator) itr.next());
+        for (Validator<V> validator : _validators)
+            validate(validator);
     }
 
-    private void validate(Validator validator)
+    private void validate(Validator<V> validator)
     {
         try
         {
@@ -67,6 +79,8 @@ public class ValidatableModel extends FeedbackModel
      */
     protected void beforeNotifyChangeListeners()
     {
+        super.beforeNotifyChangeListeners();
+        
         validate();
     }
 }

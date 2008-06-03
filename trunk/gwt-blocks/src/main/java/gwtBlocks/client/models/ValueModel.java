@@ -1,7 +1,19 @@
+// Copyright 2008 Harish Krishnaswamy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package gwtBlocks.client.models;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -16,14 +28,14 @@ import java.util.Set;
  * 
  * @author hkrishna
  */
-public class ValueModel implements ComposableModel
+public class ValueModel<V> implements ComposableModel
 {
-    private Object         _value;
-    private Set            _changeListeners;
-    private boolean        _inBatchMode;
-    private CompositeModel _parent;
+    private V                                                 _value;
+    private Set<ValueChangeListener<? extends ValueModel<V>>> _changeListeners;
+    private boolean                                           _inBatchMode;
+    private CompositeModel<?>                                 _parent;
 
-    public void setParent(String key, CompositeModel parent)
+    public void setParent(String key, CompositeModel<?> parent)
     {
         if (parent == _parent)
             return;
@@ -37,9 +49,10 @@ public class ValueModel implements ComposableModel
             _parent.addChild(key, this);
     }
 
-    public CompositeModel getParent()
+    @SuppressWarnings("unchecked")
+    public <P extends CompositeModel<?>> P getParent()
     {
-        return _parent;
+        return (P) _parent;
     }
 
     public void parentValueChanged()
@@ -55,7 +68,7 @@ public class ValueModel implements ComposableModel
      *            The new value of the model.
      * @see #commitBatch()
      */
-    public void setValue(Object value)
+    public void setValue(V value)
     {
         beforeSetValue(value);
 
@@ -70,7 +83,58 @@ public class ValueModel implements ComposableModel
         afterSetValue(value);
     }
 
-    public Object getValue()
+    /**
+     * This method could be used to initialize unbound models. This is done before setting the bean model's value so the
+     * property models could use these values to initialize their state.
+     */
+    protected void beforeSetValue(V value)
+    {
+    }
+
+    /**
+     * This method could be used to perform one time initialization of bound property models. This method is called
+     * after the value is set and the listeners are notified.
+     */
+    protected void afterSetValue(V value)
+    {
+    }
+
+    private void fireValueChanged()
+    {
+        beforeNotifyChangeListeners();
+
+        if (_changeListeners != null)
+            notifyChangeListeners();
+
+        afterNotifyChangeListeners();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void notifyChangeListeners()
+    {
+        // Notify model change listeners
+        for (ValueChangeListener listener : _changeListeners)
+            listener.valueChanged(this);
+    }
+
+    /**
+     * Hook method that will be called immediately after this model's value is set but before notifying any registered
+     * change listeners.
+     * <p>
+     * For example, see {@link InputModel}.
+     */
+    protected void beforeNotifyChangeListeners()
+    {
+    }
+
+    /**
+     * Hook method that will be called immediately after notifying all registered change listeners.
+     */
+    protected void afterNotifyChangeListeners()
+    {
+    }
+
+    public V getValue()
     {
         return _value;
     }
@@ -97,65 +161,15 @@ public class ValueModel implements ComposableModel
         _inBatchMode = false;
     }
 
-    /**
-     * This method could be used to initialize unbound models. This is done before setting the bean model's value so the
-     * property models could use these values to initialize their state.
-     */
-    protected void beforeSetValue(Object value)
-    {
-    }
-
-    /**
-     * This method could be used to perform one time initialization of bound property models. This method is called
-     * after the value is set and the listeners are notified.
-     */
-    protected void afterSetValue(Object value)
-    {
-    }
-
-    private void fireValueChanged()
-    {
-        beforeNotifyChangeListeners();
-
-        if (_changeListeners != null)
-            notifyChangeListeners();
-
-        afterNotifyChangeListeners();
-    }
-
-    private void notifyChangeListeners()
-    {
-        // Notify model change listeners
-        for (Iterator itr = _changeListeners.iterator(); itr.hasNext();)
-            ((ValueChangeListener) itr.next()).valueChanged(this);
-    }
-
-    /**
-     * Hook method that will be called immediately after this model's value is set but before notifying any registered
-     * change listeners.
-     * <p>
-     * For example, see {@link InputModel}.
-     */
-    protected void beforeNotifyChangeListeners()
-    {
-    }
-
-    /**
-     * Hook method that will be called immediately after notifying all registered change listeners.
-     */
-    protected void afterNotifyChangeListeners()
-    {
-    }
-
-    public void registerChangeListener(ValueChangeListener listener)
+    public void registerChangeListener(ValueChangeListener<? extends ValueModel<V>> listener)
     {
         if (_changeListeners == null)
-            _changeListeners = new HashSet();
+            _changeListeners = new HashSet<ValueChangeListener<? extends ValueModel<V>>>();
 
         _changeListeners.add(listener);
     }
 
-    public void removeChangeListener(ValueChangeListener listener)
+    public void removeChangeListener(ValueChangeListener<? extends ValueModel<V>> listener)
     {
         if (_changeListeners == null)
             return;

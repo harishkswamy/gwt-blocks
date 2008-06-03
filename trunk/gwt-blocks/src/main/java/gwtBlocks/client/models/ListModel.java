@@ -15,10 +15,13 @@ package gwtBlocks.client.models;
 
 import gwtBlocks.client.ConvertionException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author hkrishna
  */
-public class InputModel<T> extends ValidatableModel<T>
+public class ListModel<T> extends ValidatableModel<List<T>>
 {
     private StringConverter<T> _converter;
 
@@ -30,7 +33,7 @@ public class InputModel<T> extends ValidatableModel<T>
      * @param parent
      *            The parent model.
      */
-    public InputModel(String key, CompositeModel<?> parent)
+    public ListModel(String key, CompositeModel<?> parent)
     {
         setParent(key, parent);
     }
@@ -39,24 +42,31 @@ public class InputModel<T> extends ValidatableModel<T>
      * Intended to be invoked by the form widget to set the widget's text value. This method will convert the text
      * value, validate it and invoke {@link ValueModel#setValue(Object)}.
      * 
-     * @param text
-     *            The text value from the widget.
+     * @param textList
+     *            The text value from the list widget.
      */
     @SuppressWarnings("unchecked")
-    public void setText(String text)
+    public void setTextList(List<String> textList)
     {
         try
         {
-            T value = null;
+            List<T> value = null;
 
             // Convert
             if (_converter != null)
             {
                 getMessageModel().clear(this);
-                value = _converter.getValue(text);
+
+                if (textList != null)
+                {
+                    value = new ArrayList<T>();
+
+                    for (String str : textList)
+                        value.add(_converter.getValue(str));
+                }
             }
             else
-                value = (T) text; // Assuming T is String
+                value = (List<T>) textList; // Assuming T is String
 
             // setValue
             setValue(value);
@@ -68,16 +78,27 @@ public class InputModel<T> extends ValidatableModel<T>
     }
 
     /**
-     * @return The formatted text to be displayed in the widget.
+     * @return A list of formatted strings to be displayed in the widget.
      */
-    public String getText()
+    public List<String> getTextList()
     {
-        T value = getValue();
+        List<T> value = getValue();
 
-        if (_converter == null)
-            return value == null ? "" : value.toString();
+        if (value == null)
+            return null;
 
-        return _converter.getString(value);
+        List<String> list = new ArrayList<String>();
+        StringConverter<T> converter = getConverter();
+
+        for (T val : value)
+        {
+            if (converter == null)
+                list.add(val == null ? "" : val.toString());
+            else
+                list.add(converter.getString(val));
+        }
+
+        return list;
     }
 
     /**

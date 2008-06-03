@@ -1,22 +1,24 @@
-    public PropertyBindingModel ${propertyModelGetterName}()
-    {
-        PropertyBindingModel propModel = (PropertyBindingModel) getChild("${propertyName}");
+  public PropertyBindingModel<${propertyTypeName}> ${propertyModelGetterName}()
+  {
+      PropertyBindingModel<${propertyTypeName}> propModel = getChild("${propertyName}");
 
-        if (propModel == null)
-        {
-            propModel = new PropertyBindingModel("${propertyName}", this, ${converterName})
-                {
-                    protected void setPropertyValue()
-                    {
-                        ((${domainTypeName}) getParent().getValue()).${propertyPath}set${propertyName}((${propertyTypeName}) getValue());
-                    }
+      if (propModel == null)
+      {
+          propModel = new PropertyBindingModel<${propertyTypeName}>("${propertyName}", this, ${converterName})
+          {
+              protected void setPropertyValue()
+              {
+                  ${domainModelTypeName} parent = getParent();
+                  parent.getValue().${propertyPath}set${propertyName}(getValue());
+              }
 
-                    protected Object getPropertyValue()
-                    {
-                    	return ((${domainTypeName}) getParent().getValue()).${propertyPath}get${propertyName}();
-                    }
-                };
-        }
+              protected ${propertyTypeName} getPropertyValue()
+              {
+                  ${domainModelTypeName} parent = getParent();
+                  return parent.getValue().${propertyPath}get${propertyName}();
+              }
+          };
+      }
 
-        return propModel;
-    }
+      return propModel;
+  }

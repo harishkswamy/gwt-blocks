@@ -1,3 +1,16 @@
+// Copyright 2008 Harish Krishnaswamy
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//       http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package gwtBlocks.client.models;
 
 import java.util.ArrayList;
@@ -8,20 +21,20 @@ import java.util.Map;
 /**
  * @author hkrishna
  */
-public class MessageModel extends ValueModel
+public class MessageModel extends ValueModel<Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>>>
 {
-    public void addMessage(FeedbackModel model, String msg)
+    public void addMessage(FeedbackModel<?> model, String msg)
     {
         addMessage(model, msg, null);
     }
 
-    public void addMessage(FeedbackModel valModel, String msg, FeedbackModel[] msgModels)
+    public void addMessage(FeedbackModel<?> valModel, String msg, FeedbackModel<?>[] msgModels)
     {
         msgModels = msgModels == null || msgModels.length == 0 ? new FeedbackModel[] {valModel} : msgModels;
-        List msgModelList = concat(new ArrayList(), msgModels);
-        Map messageMap = getMessageMap();
-        Map modelMessages = getModelMessages(messageMap, valModel);
-        List oldMsgModels = (List) modelMessages.get(msg);
+        List<FeedbackModel<?>> msgModelList = concat(new ArrayList<FeedbackModel<?>>(), msgModels);
+        Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap = getMessageMap();
+        Map<String, List<FeedbackModel<?>>> modelMessages = getModelMessages(messageMap, valModel);
+        List<FeedbackModel<?>> oldMsgModels = modelMessages.get(msg);
 
         if (oldMsgModels != null)
             msgModelList.addAll(oldMsgModels);
@@ -30,7 +43,7 @@ public class MessageModel extends ValueModel
         setValue(messageMap); // This needs to be called to notify change listeners
     }
 
-    private List concat(List msgModelList, FeedbackModel[] msgModels)
+    private List<FeedbackModel<?>> concat(List<FeedbackModel<?>> msgModelList, FeedbackModel<?>[] msgModels)
     {
         if (msgModels == null)
             return msgModelList;
@@ -46,38 +59,33 @@ public class MessageModel extends ValueModel
         return !getMessageMap().isEmpty();
     }
 
-    public void clear(FeedbackModel model)
+    public void clear(FeedbackModel<?> model)
     {
-        Map messageMap = getMessageMap();
+        Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap = getMessageMap();
         if (messageMap.remove(model) != null)
             setValue(messageMap); // This needs to be called to notify change listeners
     }
 
     public void clear()
     {
-        Map messageMap = getMessageMap();
+        Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap = getMessageMap();
         messageMap.clear();
         setValue(messageMap); // This needs to be called to notify change listeners
     }
 
-    public Map getMessages()
+    private Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> getMessageMap()
     {
-        return (Map) getValue();
+        Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap = getValue();
+        return messageMap == null ? new HashMap<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>>() : messageMap;
     }
 
-    private Map getMessageMap()
+    private Map<String, List<FeedbackModel<?>>> getModelMessages(final Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap, FeedbackModel<?> model)
     {
-        Map messageMap = (Map) getValue();
-        return messageMap == null ? new HashMap() : messageMap;
-    }
-
-    private Map getModelMessages(final Map messageMap, FeedbackModel model)
-    {
-        Map messages = (Map) messageMap.get(model);
+        Map<String, List<FeedbackModel<?>>> messages = messageMap.get(model);
 
         if (messages == null)
         {
-            messages = new HashMap();
+            messages = new HashMap<String, List<FeedbackModel<?>>>();
             messageMap.put(model, messages);
         }
 

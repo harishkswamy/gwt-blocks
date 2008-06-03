@@ -1,3 +1,16 @@
+# Copyright 2008 Harish Krishnaswamy
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 module GwtBlocksProject
   include Extension
 
@@ -9,9 +22,9 @@ module GwtBlocksProject
   GWT_BLOCKS_SERVER_LIB = "#{GROUP}:#{NAME}:jar:server:#{VERSION}"
 
   ORACLE      = 'com.oracle:ojdbc14:jar:10.2.0.4'
-  GWT_USER    = 'com.google.gwt:gwt-user:jar:1.4.10'
-  GWT_WINDOWS = 'com.google.gwt:gwt-dev:jar:windows:1.4.10'
-  GWT_SERVLET = 'com.google.gwt:gwt-servlet:jar:1.4.10'
+  GWT_USER    = 'com.google.gwt:gwt-user:jar:1.5.0'
+  GWT_WINDOWS = 'com.google.gwt:gwt-dev:jar:windows:1.5.0'
+  GWT_SERVLET = 'com.google.gwt:gwt-servlet:jar:1.5.0'
   FREEMARKER  = 'org.freemarker:freemarker:jar:2.3.10'
 
   first_time do
@@ -69,6 +82,7 @@ module GwtBlocksProject
 	end
 
 	def build_project(options={})
+	  compile.options.source = options[:java_version] || '1.5'
 	  compile.options.target = options[:java_version] || '1.5'
 
     compile.with(source_deps)
