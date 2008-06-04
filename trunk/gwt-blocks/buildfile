@@ -26,7 +26,7 @@ define 'gwt-blocks' do
   client_jar.include('src/main/java/*').exclude('src/main/java/**/server/**/*')
   
   server_jar = package(:jar, :classifier => 'server').clean
-  server_jar.include('target/classes', :as => '.').exclude('**/client/**/*', '**/rebind/**/*')
+  server_jar.include('target/classes', :as => '.').exclude('**/client/**/*', '**/generators/**/*')
   server_jar.include('target/resources', :as => '.').exclude('**/public/**/*', '**/*.gwt.xml')
   
   help do
