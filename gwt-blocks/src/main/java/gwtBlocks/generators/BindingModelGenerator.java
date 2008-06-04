@@ -13,14 +13,10 @@
 // limitations under the License.
 package gwtBlocks.generators;
 
-import freemarker.template.Template;
 import gwtBlocks.client.Converters;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
@@ -29,78 +25,85 @@ import com.google.gwt.core.ext.typeinfo.JMethod;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.NotFoundException;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
+import com.google.gwt.user.rebind.SourceWriter;
 
 public class BindingModelGenerator extends AbstractClassGenerator
 {
-    private Template _propertyModelTemplate;
+    private static class PropertyBindingModelGenerator
+    {
+        private static final StringBuilder _propertyModelTemplate = new StringBuilder();
+
+        private JClassType                 _genClass;
+        private SourceWriter               _sourceWriter;
+
+        PropertyBindingModelGenerator(JClassType genClass, SourceWriter sourceWriter) throws Exception
+        {
+            _genClass = genClass;
+            _sourceWriter = sourceWriter;
+
+            if (_propertyModelTemplate.length() == 0)
+                loadTemplate();
+        }
+
+        private void loadTemplate() throws Exception
+        {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(
+                "propertyModel.ftl")));
+
+            try
+            {
+                String line = null;
+
+                while ((line = reader.readLine()) != null)
+                    _propertyModelTemplate.append(line).append('\n');
+            }
+            finally
+            {
+                reader.close();
+            }
+        }
+
+        void generate(JMethod domainGetter, String propModelGetterName, String propPath, String propGetterPath)
+        {
+            String propName = domainGetter.getName().replaceFirst("get", "");
+            String propTypeName = domainGetter.getReturnType().getQualifiedSourceName();
+
+            String template = _propertyModelTemplate.toString();
+            template = template.replaceAll("\\$\\{propertyTypeName\\}", propTypeName);
+            template = template.replaceAll("\\$\\{propertyModelGetterName\\}", propModelGetterName);
+            template = template.replaceAll("\\$\\{propertyPath\\}", propPath == null ? propName : propPath);
+            template = template.replaceAll("\\$\\{propertyName\\}", propName);
+            template = template.replaceAll("\\$\\{converterName\\}", getConverterName(propTypeName));
+            template = template.replaceAll("\\$\\{domainModelTypeName\\}", _genClass.getName());
+            template = template.replaceAll("\\$\\{propertyGetterPath\\}", propGetterPath);
+
+            _sourceWriter.println(template);
+        }
+
+        private String getConverterName(String type)
+        {
+            String converterName = (String) Converters.getConverterNameMap().get(type);
+            return converterName == null ? "null" : converterName;
+        }
+    }
 
     protected void addImports(ClassSourceFileComposerFactory composerFactory)
     {
-        //        composerFactory.addImport("gwtBlocks.client.Converters");
-        //        composerFactory.addImport("gwtBlocks.client.ValidationException");
-        //        composerFactory.addImport("gwtBlocks.client.models.BeanBindingModel");
-        //        composerFactory.addImport("gwtBlocks.client.models.MessageModel");
-        //        composerFactory.addImport("gwtBlocks.client.models.ValueModel");
         composerFactory.addImport("gwtBlocks.client.models.PropertyBindingModel");
     }
 
     protected void generateSource(String packageName, String genClassName) throws Exception
     {
-        _propertyModelTemplate = getTemplate("propertyModel.ftl");
-
-        String domainTypeName = getMetaData("gwt-blocks.domain.class-name", 0, 0);
+        String domainTypeName = _genClass.getAnnotation(DomainClassName.class).value();
 
         JClassType domainClass = getType(domainTypeName);
-        List<Object[]> propertyGetters = getPropertyGetters(_genClass, domainClass);
 
-        for (Object[] getterProps : propertyGetters)
-        {
-            JMethod getter = (JMethod) getterProps[0];
-            String propertyPath = (String) getterProps[1];
-            String propModelGetterName = (String) getterProps[2];
-            generatePropertyBindingSource(getter, propertyPath, propModelGetterName, domainTypeName);
-        }
+        generatePropertyModels(_genClass, domainClass, new PropertyBindingModelGenerator(_genClass, _sourceWriter));
     }
 
-    private void generatePropertyBindingSource(JMethod domainGetter, String propertyPath, String propModelGetterName,
-        String domainTypeName) throws Exception
+    private void generatePropertyModels(JClassType modelClass, JClassType domainClass,
+        PropertyBindingModelGenerator propGenerator) throws UnableToCompleteException
     {
-        Map<String, String> root = new HashMap<String, String>();
-
-        String propertyName = domainGetter.getName().replaceFirst("get", "");
-        String propertyTypeName = domainGetter.getReturnType().getQualifiedSourceName();
-        root.put("propertyModelGetterName", propModelGetterName);
-        root.put("propertyPath", propertyPath);
-        root.put("propertyName", propertyName);
-        root.put("propertyTypeName", propertyTypeName);
-        root.put("domainTypeName", domainTypeName);
-        root.put("domainModelTypeName", _genClass.getName());
-        root.put("converterName", getConverterName(propertyTypeName));
-
-        StringWriter out = new StringWriter();
-        _propertyModelTemplate.process(root, out);
-        out.flush();
-
-        _sourceWriter.println(out.toString());
-
-        out.close();
-    }
-
-    /**
-     * @param modelClass
-     * @param domainClass
-     * @return A list of Object arrays. Each Object array is of size 3 and contains the following information.
-     *         <ol>
-     *         <li>JMethod of the actual getter method in the domain object
-     *         <li>Property path getter string terminated by a period, for ex. "getClient().getRegion()."
-     *         <li>Property model getter name as defined in the BeanBindingModel, for ex. getFieldIdModel
-     *         </ol>
-     * @throws UnableToCompleteException
-     */
-    private List<Object[]> getPropertyGetters(JClassType modelClass, JClassType domainClass)
-        throws UnableToCompleteException
-    {
-        List<Object[]> getters = new ArrayList<Object[]>();
         JMethod[] methods = modelClass.getMethods();
         JType[] nullArg = new JType[0];
 
@@ -109,19 +112,17 @@ public class BindingModelGenerator extends AbstractClassGenerator
             if (methods[i].isAbstract()
                 && methods[i].getReturnType().getSimpleSourceName().equals("PropertyBindingModel"))
             {
-                String propertyPath = getPropertyPath(methods[i]);
+                String propertyPath = getPropertyPath(methods[i]), propGetterPath = "";
                 JMethod getterMethod = null;
 
                 if (propertyPath == null)
                 {
                     String getter = methods[i].getName().substring(0, methods[i].getName().lastIndexOf("Model"));
                     getterMethod = getMethod(domainClass, getter, nullArg);
-                    propertyPath = "";
                 }
                 else
                 {
                     String[] props = propertyPath.split("\\.");
-                    propertyPath = "";
                     JClassType propClass = domainClass;
 
                     for (int j = 0; j < props.length; j++)
@@ -129,28 +130,23 @@ public class BindingModelGenerator extends AbstractClassGenerator
                         String getter = "get" + props[j].substring(0, 1).toUpperCase() + props[j].substring(1);
 
                         if (j < props.length - 1)
-                            propertyPath += getter + "().";
+                            propGetterPath += getter + "().";
 
                         getterMethod = getMethod(propClass, getter, nullArg);
                         propClass = getterMethod.getReturnType().isClassOrInterface();
                     }
                 }
 
-                getters.add(new Object[] { getterMethod, propertyPath, methods[i].getName() });
+                propGenerator.generate(getterMethod, methods[i].getName(), propertyPath, propGetterPath);
             }
         }
-
-        return getters;
     }
 
     private String getPropertyPath(JMethod method)
     {
-        String[][] metaData = method.getMetaData("gwt-blocks.domain.property-path");
+        DomainPropertyPath annotation = method.getAnnotation(DomainPropertyPath.class);
 
-        if (metaData.length > 0)
-            return metaData[0][0];
-
-        return null;
+        return annotation == null ? null : annotation.value();
     }
 
     private JMethod getMethod(JClassType classType, String methodName, JType[] args) throws UnableToCompleteException
@@ -170,11 +166,5 @@ public class BindingModelGenerator extends AbstractClassGenerator
                 throw new UnableToCompleteException();
             }
         }
-    }
-
-    private String getConverterName(String type)
-    {
-        String converterName = (String) Converters.getConverterNameMap().get(type);
-        return converterName == null ? "null" : converterName;
     }
 }
