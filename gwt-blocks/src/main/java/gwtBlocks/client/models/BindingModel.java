@@ -19,6 +19,6 @@ package gwtBlocks.client.models;
 public interface BindingModel
 {
     void setAutoCommit(boolean autoCommit);
-    
+
     void commit();
 }

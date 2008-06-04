@@ -25,7 +25,7 @@ public class TextBoxView<M extends InputModel<?>> extends TextBoxBaseView<M>
     private static TextBox buildTextBox()
     {
         TextBox textBox = new TextBox();
-        textBox.addStyleName("cvg-text-box");
+        textBox.addStyleName("blk-TextBoxView");
 
         return textBox;
     }

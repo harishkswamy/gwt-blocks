@@ -30,7 +30,7 @@ import java.util.Iterator;
  * <ul>
  * <li>The model class must declare a no args constructor.</li>
  * <li>The model class must declare the binding domain object type via the javadoc tag
- * <code>-@cvg.domain.class-name</code>
+ * <code>-@blk.domain.class-name</code>
  * <li>The binding domain class must declare a no args constructor.</li>
  * <li>The model class must declare the properties to be bound as abstract getter methods with "Model" appended to the
  * getter name and must return {@link PropertyBindingModel}. For example <code>public abstract PropertyBindingModel 

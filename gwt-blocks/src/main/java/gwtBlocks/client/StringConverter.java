@@ -11,12 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package gwtBlocks.client.models;
+package gwtBlocks.client;
 
-/**
- * @author hkrishna
- */
-public interface ValueChangeListener<M extends ValueModel<?>>
+public interface StringConverter<T>
 {
-    void valueChanged(M model);
+    T getValue(String value) throws ConvertionException;
+
+    String getString(T value);
 }

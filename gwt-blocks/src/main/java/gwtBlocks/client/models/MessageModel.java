@@ -30,7 +30,7 @@ public class MessageModel extends ValueModel<Map<FeedbackModel<?>, Map<String, L
 
     public void addMessage(FeedbackModel<?> valModel, String msg, FeedbackModel<?>[] msgModels)
     {
-        msgModels = msgModels == null || msgModels.length == 0 ? new FeedbackModel[] {valModel} : msgModels;
+        msgModels = msgModels == null || msgModels.length == 0 ? new FeedbackModel[] { valModel } : msgModels;
         List<FeedbackModel<?>> msgModelList = concat(new ArrayList<FeedbackModel<?>>(), msgModels);
         Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap = getMessageMap();
         Map<String, List<FeedbackModel<?>>> modelMessages = getModelMessages(messageMap, valModel);
@@ -47,7 +47,7 @@ public class MessageModel extends ValueModel<Map<FeedbackModel<?>, Map<String, L
     {
         if (msgModels == null)
             return msgModelList;
-        
+
         for (int i = 0; i < msgModels.length; i++)
             msgModelList.add(msgModels[i]);
 
@@ -79,7 +79,8 @@ public class MessageModel extends ValueModel<Map<FeedbackModel<?>, Map<String, L
         return messageMap == null ? new HashMap<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>>() : messageMap;
     }
 
-    private Map<String, List<FeedbackModel<?>>> getModelMessages(final Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap, FeedbackModel<?> model)
+    private Map<String, List<FeedbackModel<?>>> getModelMessages(
+        final Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> messageMap, FeedbackModel<?> model)
     {
         Map<String, List<FeedbackModel<?>>> messages = messageMap.get(model);
 

@@ -138,7 +138,7 @@ public class CompositeModel<T> extends ValidatableModel<T>
     protected void beforeNotifyChangeListeners()
     {
         super.beforeNotifyChangeListeners();
-        
+
         if (_children == null)
             return;
 

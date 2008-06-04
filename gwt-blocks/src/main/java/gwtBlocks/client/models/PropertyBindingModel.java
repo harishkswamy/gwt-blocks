@@ -13,6 +13,9 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
+import gwtBlocks.client.StringConverter;
+import gwtBlocks.generators.BindingModelGenerator;
+
 /**
  * This model binds a single value held in this model to a single property in the domain object held by the contained
  * bean model.
@@ -47,7 +50,7 @@ public abstract class PropertyBindingModel<V> extends InputModel<V> implements B
     public void parentValueChanged()
     {
         super.parentValueChanged();
-        
+
         BeanBindingModel<?> beanModel = getParent();
 
         if (beanModel.getValue() == null)
@@ -59,7 +62,7 @@ public abstract class PropertyBindingModel<V> extends InputModel<V> implements B
     protected void beforeNotifyChangeListeners()
     {
         super.beforeNotifyChangeListeners();
-        
+
         if (_autoCommit)
             commit();
     }
