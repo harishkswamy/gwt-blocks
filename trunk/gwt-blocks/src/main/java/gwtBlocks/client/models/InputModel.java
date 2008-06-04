@@ -38,7 +38,7 @@ public class InputModel<T> extends ValidatableModel<T>
 
     /**
      * Intended to be invoked by the form widget to set the widget's text value. This method will convert the text
-     * value, validate it and invoke {@link ValueModel#setValue(Object)}.
+     * value, validate it and invoke {@link BaseModel#setValue(Object)}.
      * 
      * @param text
      *            The text value from the widget.

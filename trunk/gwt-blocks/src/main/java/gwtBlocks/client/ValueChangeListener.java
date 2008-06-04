@@ -13,12 +13,12 @@
 // limitations under the License.
 package gwtBlocks.client;
 
-import gwtBlocks.client.models.ValueModel;
+import gwtBlocks.client.models.BaseModel;
 
 /**
  * @author hkrishna
  */
-public interface ValueChangeListener<M extends ValueModel<?>>
+public interface ValueChangeListener<M extends BaseModel<?>>
 {
     void valueChanged(M model);
 }

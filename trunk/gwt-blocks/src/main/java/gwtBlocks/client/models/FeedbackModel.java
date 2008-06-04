@@ -14,12 +14,12 @@
 package gwtBlocks.client.models;
 
 /**
- * This is a {@link ValueModel} that wraps the {@link MessageModel} and has a name. This is a convenience model that can
+ * This is a {@link BaseModel} that wraps the {@link MessageModel} and has a name. This is a convenience model that can
  * be used to provide user feedback.
  * 
  * @author hkrishna
  */
-public class FeedbackModel<V> extends ValueModel<V>
+public class FeedbackModel<V> extends BaseModel<V>
 {
     private String       _name;
     private MessageModel _messageModel;

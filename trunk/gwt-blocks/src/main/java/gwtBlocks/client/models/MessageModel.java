@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @author hkrishna
  */
-public class MessageModel extends ValueModel<Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>>>
+public class MessageModel extends BaseModel<Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>>>
 {
     public void addMessage(FeedbackModel<?> model, String msg)
     {

@@ -14,14 +14,14 @@
 package gwtBlocks.client.views;
 
 import gwtBlocks.client.ValueChangeListener;
-import gwtBlocks.client.models.ValueModel;
+import gwtBlocks.client.models.BaseModel;
 
 import com.google.gwt.user.client.ui.Composite;
 
 /**
  * @author hkrishna
  */
-public abstract class BaseView<M extends ValueModel<?>> extends Composite implements ValueChangeListener<M>
+public abstract class BaseView<M extends BaseModel<?>> extends Composite implements ValueChangeListener<M>
 {
     private M _model;
 
