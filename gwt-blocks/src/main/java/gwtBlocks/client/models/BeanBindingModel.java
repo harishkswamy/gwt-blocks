@@ -18,29 +18,38 @@ import gwtBlocks.client.ValidationException;
 import java.util.Iterator;
 
 /**
- * This model is a collection of {@link PropertyBindingModel}s each of which binds a single form widget to a property
- * in the domain object wrapped by this model. The binding enables automatic convertion, validation and transfer of user
- * input to the domain object.
+ * This model is a collection of {@link PropertyBindingModel}s each of which binds to a property in the binding object
+ * wrapped by this model. The binding enables automatic convertion, validation and transfer of user input to the domain
+ * object.
  * <p>
- * This is a buffered model, meaning input values from the bound widgets are not transferred to the domain object until
- * {@link #commit()} is called.
+ * This is a buffered model, meaning values stored in this model are not transferred to the domain object until
+ * {@link #commit()} is called. However, buffering can be turned off by turning auto commit on via
+ * {@link #setAutoCommit(boolean)}.
  * <p>
- * This model is automatically generated at runtime and there are some conventions to be followed for the model to be
- * generated correctly.
+ * This model is automatically generated based on the conventions outlined below.
  * <ul>
  * <li>The model class must declare a no args constructor.</li>
- * <li>The model class must declare the binding domain object type via the javadoc tag
- * <code>-@blk.domain.class-name</code>
- * <li>The binding domain class must declare a no args constructor.</li>
- * <li>The model class must declare the properties to be bound as abstract getter methods with "Model" appended to the
- * getter name and must return {@link PropertyBindingModel}. For example <code>public abstract PropertyBindingModel 
- * getTitleModel();</code>
- * where <code>title</code> is the domain property.</li>
- * <li>The {@link #setValue(Object)} method must be called before {@link #reset()}, {@link #commit()} or
- * {@link #save()} is called.</li>
+ * <li>The model class must declare the binding class name via the {@link BindingClass} annotation. For example, the
+ * following declaration binds the {@link PropertyBindingModel} properties in <code>DomainModel</code> to the
+ * properties in <code>com.xyz.Domain</code>.
+ * 
+ * <pre><code>
+ * &#064;BindingClass(com.xyz.Domain.class) 
+ * public abstract DomainModel extends BeanBindingModel&lt;Domain&gt;
+ * {
+ *     &#064;BindingProperty(&quot;child.name&quot;)
+ *     public abstract PropertyBindingModel&lt;String&gt; getChildNameModel();
+ *     
+ *     public abstract PropertyBindingModel&lt;String&gt; getNameModel();
+ * }
+ * </code></pre>
+ * 
+ * <li>The binding class must declare a no args constructor.</li>
+ * <li>The model class must declare the properties to be bound as abstract getter methods that return
+ * {@link PropertyBindingModel} as shown in the example above. The getter methods must declare the binding property via
+ * the {@link BindingProperty} annotation. Simple properties can follow the convention shown in the above example for
+ * <code>getNameModel()</code> and skip the annotation.</li>
  * </ul>
- * <p>
- * Validators can be registered to the model in the {@link #setup()} method.
  * 
  * @author hkrishna
  */
@@ -87,14 +96,14 @@ public abstract class BeanBindingModel<V> extends CompositeModel<V> implements B
 
     private void doForEachChild(Task task)
     {
-        Iterator<ComposableModel> itr = getChildIterator();
+        Iterator<ComposableModel<?>> itr = getChildIterator();
 
         if (itr == null)
             return;
 
         while (itr.hasNext())
         {
-            ComposableModel model = itr.next();
+            ComposableModel<?> model = itr.next();
 
             if (model instanceof PropertyBindingModel)
                 task.execute((PropertyBindingModel<?>) model);
