@@ -13,7 +13,7 @@
 // limitations under the License.
 package gwtBlocks.client.views;
 
-import gwtBlocks.client.models.ValueChangeListener;
+import gwtBlocks.client.ValueChangeListener;
 import gwtBlocks.client.models.ValueModel;
 
 import com.google.gwt.user.client.ui.Composite;
@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Composite;
 public abstract class BaseView<M extends ValueModel<?>> extends Composite implements ValueChangeListener<M>
 {
     private M _model;
-    
+
     public void setModel(M model)
     {
         if (_model != null)

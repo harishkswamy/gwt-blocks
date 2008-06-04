@@ -14,6 +14,7 @@
 package gwtBlocks.client.models;
 
 import gwtBlocks.client.ConvertionException;
+import gwtBlocks.client.StringConverter;
 
 /**
  * @author hkrishna

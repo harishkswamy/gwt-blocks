@@ -13,6 +13,8 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
+import gwtBlocks.client.ValueChangeListener;
+
 import java.util.HashSet;
 import java.util.Set;
 

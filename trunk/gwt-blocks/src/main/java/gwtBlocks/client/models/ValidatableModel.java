@@ -14,6 +14,7 @@
 package gwtBlocks.client.models;
 
 import gwtBlocks.client.ValidationException;
+import gwtBlocks.client.Validator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -80,7 +81,7 @@ public class ValidatableModel<V> extends FeedbackModel<V>
     protected void beforeNotifyChangeListeners()
     {
         super.beforeNotifyChangeListeners();
-        
+
         validate();
     }
 }
