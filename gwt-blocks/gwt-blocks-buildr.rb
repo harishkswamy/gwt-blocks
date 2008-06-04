@@ -21,11 +21,9 @@ module GwtBlocksProject
   GWT_BLOCKS_CLIENT_LIB = "#{GROUP}:#{NAME}:jar:client:#{VERSION}"
   GWT_BLOCKS_SERVER_LIB = "#{GROUP}:#{NAME}:jar:server:#{VERSION}"
 
-  ORACLE      = 'com.oracle:ojdbc14:jar:10.2.0.4'
   GWT_USER    = 'com.google.gwt:gwt-user:jar:1.5.0'
   GWT_WINDOWS = 'com.google.gwt:gwt-dev:jar:windows:1.5.0'
   GWT_SERVLET = 'com.google.gwt:gwt-servlet:jar:1.5.0'
-  FREEMARKER  = 'org.freemarker:freemarker:jar:2.3.10'
 
   first_time do
     Buildr.repositories.remote << 'http://repo1.maven.org/maven2'
@@ -52,7 +50,7 @@ module GwtBlocksProject
 
   def runtime_deps
     return @runtime_deps if defined? @runtime_deps
-    @runtime_deps = [source_deps, local_dev? ? 'hsqldb:hsqldb:jar:1.8.0.7' : ORACLE]
+    @runtime_deps = [source_deps]
   end
   
   def client_deps
@@ -61,21 +59,17 @@ module GwtBlocksProject
     @client_deps << GWT_BLOCKS_CLIENT_LIB if project.name != NAME
     @client_deps
   end
-
-	#url = "https://profile.oracle.com/jsp/reg/loginHandler.jsp?username=harishkswamy&password=XXX&redirectUrl=http://download.oracle.com/otn/utilities_drivers/jdbc/10204/ojdbc14.jar"
-	#install download(artifact(ORACLE)=>url)
 	
 	def init_project(options={})
 	  project.group = options[:group] || GROUP
 	  project.version = options[:version] || VERSION
-    
-    artifacts artifact(ORACLE).from(Buildr.settings.user['oracle_jar']) if !local_dev?
+
     artifacts artifact(GWT_USER).from(Buildr.settings.user['gwt_user'])
     artifacts artifact(GWT_WINDOWS).from(Buildr.settings.user['gwt_windows'])
     artifacts artifact(GWT_SERVLET).from(Buildr.settings.user['gwt_servlet'])
 
     source_deps << client_deps
-    source_deps << [GWT_SERVLET, FREEMARKER]
+    source_deps << [GWT_SERVLET]
     source_deps << GWT_BLOCKS_SERVER_LIB if project.name != NAME
 
     yield if block_given?
