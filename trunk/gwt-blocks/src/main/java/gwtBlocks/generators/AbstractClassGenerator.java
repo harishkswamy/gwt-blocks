@@ -24,10 +24,6 @@ import com.google.gwt.core.ext.typeinfo.NotFoundException;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-
 /**
  * @author hkrishna
  */
@@ -38,7 +34,6 @@ public abstract class AbstractClassGenerator extends Generator
     protected JClassType     _genClass;
 
     private GeneratorContext _context;
-    private Configuration    _freeMarkerCfg;
 
     public String generate(TreeLogger logger, GeneratorContext context, String genClassName)
         throws UnableToCompleteException
@@ -58,7 +53,6 @@ public abstract class AbstractClassGenerator extends Generator
 
             if (_sourceWriter != null)
             {
-                initFreeMarker();
                 generateSource(packageName, proxyClassName);
                 _sourceWriter.commit(logger);
             }
@@ -107,31 +101,6 @@ public abstract class AbstractClassGenerator extends Generator
         addImports(composerFactory);
 
         return composerFactory.createSourceWriter(_context, printWriter);
-    }
-
-    protected void initFreeMarker() throws Exception
-    {
-        _freeMarkerCfg = new Configuration();
-        _freeMarkerCfg.setClassForTemplateLoading(getClass(), "");
-        _freeMarkerCfg.setObjectWrapper(new DefaultObjectWrapper());
-    }
-
-    protected Template getTemplate(String name) throws Exception
-    {
-        return _freeMarkerCfg.getTemplate(name);
-    }
-
-    protected String getMetaData(String tagName, int occurance, int field) throws UnableToCompleteException
-    {
-        try
-        {
-            return _genClass.getMetaData(tagName)[occurance][field];
-        }
-        catch (ArrayIndexOutOfBoundsException e)
-        {
-            _logger.log(TreeLogger.ERROR, "Missing meta tag. Check if you specified the javadoc tag " + tagName, e);
-            throw new UnableToCompleteException();
-        }
     }
 
     protected abstract void addImports(ClassSourceFileComposerFactory composerFactory);
