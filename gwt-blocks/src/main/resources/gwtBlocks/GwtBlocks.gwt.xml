@@ -18,7 +18,7 @@
 	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
 
-    <generate-with class="gwtBlocks.generators.BindingModelGenerator">
+    <generate-with class="gwtBlocks.generators.BeanBindingModelGenerator">
         <when-type-assignable class="gwtBlocks.client.models.BeanBindingModel" />
     </generate-with>
 	<!-- Specify the app entry point class.                   -->
