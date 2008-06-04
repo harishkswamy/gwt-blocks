@@ -19,8 +19,8 @@ import java.lang.annotation.Target;
 /**
  * @author hkrishna
  */
-@Target(ElementType.METHOD)
-public @interface DomainPropertyPath
+@Target(ElementType.TYPE)
+public @interface BindingClass
 {
-    String value();
+    Class<?> value();
 }

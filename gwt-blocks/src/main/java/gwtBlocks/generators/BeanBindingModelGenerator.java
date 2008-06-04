@@ -27,7 +27,7 @@ import com.google.gwt.core.ext.typeinfo.NotFoundException;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
 import com.google.gwt.user.rebind.SourceWriter;
 
-public class BindingModelGenerator extends AbstractClassGenerator
+public class BeanBindingModelGenerator extends AbstractClassGenerator
 {
     private static class PropertyBindingModelGenerator
     {
@@ -94,7 +94,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
 
     protected void generateSource(String packageName, String genClassName) throws Exception
     {
-        String domainTypeName = _genClass.getAnnotation(DomainClassName.class).value();
+        String domainTypeName = _genClass.getAnnotation(BindingClass.class).value().getName();
 
         JClassType domainClass = getType(domainTypeName);
 
@@ -144,7 +144,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
 
     private String getPropertyPath(JMethod method)
     {
-        DomainPropertyPath annotation = method.getAnnotation(DomainPropertyPath.class);
+        BindingProperty annotation = method.getAnnotation(BindingProperty.class);
 
         return annotation == null ? null : annotation.value();
     }
