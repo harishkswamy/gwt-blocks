@@ -61,14 +61,11 @@ public abstract class BeanBindingModel<V> extends CompositeModel<V> implements B
     public void setAutoCommit(boolean autoCommit)
     {
         _autoCommit = autoCommit;
+    }
 
-        doForEachChild(new Task()
-        {
-            public void execute(PropertyBindingModel<?> model)
-            {
-                model.setAutoCommit(_autoCommit);
-            }
-        });
+    public boolean isAutoCommit()
+    {
+        return _autoCommit;
     }
 
     /**
