@@ -48,7 +48,7 @@ public class BindingModelGenerator extends AbstractClassGenerator
         private void loadTemplate() throws Exception
         {
             BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(
-                "propertyModel.ftl")));
+                "PropertyBindingModel.ftl")));
 
             try
             {
