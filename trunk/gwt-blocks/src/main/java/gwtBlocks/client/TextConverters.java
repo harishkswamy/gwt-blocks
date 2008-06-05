@@ -13,9 +13,23 @@
 // limitations under the License.
 package gwtBlocks.client;
 
-public interface StringConverter<T>
+/**
+ * @author hkrishna
+ */
+public class TextConverters
 {
-    T getValue(String value) throws ConvertionException;
+    public static final TextConverter<String> JAVA_LANG_STRING = new StringConverter();
 
-    String getString(T value);
+    private static class StringConverter implements TextConverter<String>
+    {
+        public String getString(String value)
+        {
+            return value == null ? "" : value;
+        }
+
+        public String getValue(String value) throws ConvertionException
+        {
+            return value != null && "".equals(value.trim()) ? null : value;
+        }
+    }
 }
