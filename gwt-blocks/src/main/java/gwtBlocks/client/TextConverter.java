@@ -13,16 +13,9 @@
 // limitations under the License.
 package gwtBlocks.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * @author hkrishna
- */
-public class Converters
+public interface TextConverter<T>
 {
-    public static Map<String, String> getConverterNameMap()
-    {
-        return new HashMap<String, String>();
-    }
+    T getValue(String value) throws ConvertionException;
+
+    String getString(T value);
 }
