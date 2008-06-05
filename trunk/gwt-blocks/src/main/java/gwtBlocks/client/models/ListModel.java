@@ -56,7 +56,7 @@ public class ListModel<T> extends ValidatableModel<List<T>>
             // Convert
             if (_converter != null)
             {
-                getMessageModel().clear(this);
+                clearMessages();
 
                 if (textList != null)
                 {
@@ -74,7 +74,7 @@ public class ListModel<T> extends ValidatableModel<List<T>>
         }
         catch (ConvertionException e)
         {
-            getMessageModel().addMessage(this, e.getMessage());
+            addMessage(e.getMessage(), null);
         }
     }
 

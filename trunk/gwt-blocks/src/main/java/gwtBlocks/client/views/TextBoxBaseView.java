@@ -46,6 +46,7 @@ public class TextBoxBaseView<M extends InputModel<?>> extends BaseView<M> implem
         return _textWidget;
     }
 
+    @Override
     public void valueChanged(M model)
     {
         _textWidget.setText(model.getText());

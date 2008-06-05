@@ -14,6 +14,8 @@
 package gwtBlocks.client.models;
 
 import gwtBlocks.client.ValidationException;
+import gwtBlocks.generators.BindingClass;
+import gwtBlocks.generators.BindingProperty;
 
 import java.util.Iterator;
 
@@ -96,14 +98,14 @@ public abstract class BeanBindingModel<V> extends CompositeModel<V> implements B
 
     private void doForEachChild(Task task)
     {
-        Iterator<ComposableModel<?>> itr = getChildIterator();
+        Iterator<BaseModel<?>> itr = getChildIterator();
 
         if (itr == null)
             return;
 
         while (itr.hasNext())
         {
-            ComposableModel<?> model = itr.next();
+            BaseModel<?> model = itr.next();
 
             if (model instanceof PropertyBindingModel)
                 task.execute((PropertyBindingModel<?>) model);

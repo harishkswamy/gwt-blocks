@@ -35,9 +35,7 @@ public class ValidatableModel<V> extends FeedbackModel<V>
 
         _validators.add(validator);
 
-        // Validate current value in the model
-        if (getMessageModel() != null)
-            validate(validator);
+        validate(validator);
     }
 
     public void removeValidator(Validator<V> validator)
@@ -48,12 +46,20 @@ public class ValidatableModel<V> extends FeedbackModel<V>
         _validators.remove(validator);
     }
 
-    protected void validate()
+    /**
+     * Validation is plugged in after setting value but before notifying change listeners.
+     */
+    @Override
+    protected void beforeNotifyChangeListeners()
     {
-        if (getMessageModel() == null)
-            return;
+        super.beforeNotifyChangeListeners();
 
-        getMessageModel().clear(this);
+        validate();
+    }
+
+    private void validate()
+    {
+        clearMessages();
 
         if (_validators == null)
             return;
@@ -71,17 +77,7 @@ public class ValidatableModel<V> extends FeedbackModel<V>
         }
         catch (ValidationException e)
         {
-            getMessageModel().addMessage(this, e.getMessage(), e.getMessageModels());
+            addMessage(e.getMessage(), e.getMessageModels());
         }
-    }
-
-    /**
-     * Validation is plugged in after setting value but before notifying change listeners.
-     */
-    protected void beforeNotifyChangeListeners()
-    {
-        super.beforeNotifyChangeListeners();
-
-        validate();
     }
 }

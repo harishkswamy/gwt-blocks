@@ -19,20 +19,27 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is the base implementation of {@link ComposableModel} of the MVC framework.
+ * This is the base implementation of the presentation model pattern of the MVC framework.
+ * <P>
+ * This is the fundamental unit that forms a tree of models to support a composite view. Every model becomes a part of
+ * the tree by holding on to its parent provided to it via {@link #setParent(String, CompositeModel)}. The root model
+ * of the tree has no parent and so its parent is left null.
  * <p>
- * The specific features of this model are its ability to let sub classes hook behavior before and after notifying
- * listeners and its ability to batch multiple changes to its value and only notify the listeners when the batch is
- * committed.
+ * Every model holds a single value and has listeners, registered to it via
+ * {@link #registerChangeListener(ValueChangeListener)}, that listen to changes to the model's value. Every parent
+ * listens to its children and every child listens to its parent and there by enabling a decoupled solution.
+ * <p>
+ * The specific features of this model are its ability to let sub classes hook behavior before notifying listeners and
+ * its ability to batch multiple changes to its value and only notify the listeners when the batch is committed.
  * 
  * @author hkrishna
  */
-public class BaseModel<V> implements ComposableModel<V>
+public class BaseModel<V>
 {
-    private V                                                      _value;
-    private Set<ValueChangeListener<? extends ComposableModel<V>>> _changeListeners;
-    private boolean                                                _inBatchMode;
-    private CompositeModel<?>                                      _parent;
+    private V                                                _value;
+    private Set<ValueChangeListener<? extends BaseModel<V>>> _changeListeners;
+    private boolean                                          _inBatchMode;
+    private CompositeModel<?>                                _parent;
 
     public void setParent(String key, CompositeModel<?> parent)
     {
@@ -60,15 +67,13 @@ public class BaseModel<V> implements ComposableModel<V>
 
     /**
      * Sets this model's value and notifies registered change listeners. Sub classes can implement
-     * {@link #beforeNotifyChangeListeners()} and {@link #afterNotifyChangeListeners()} methods to be invoked before and
-     * after notifying change listeners.
+     * {@link #beforeNotifyChangeListeners()} method to hook behavior before notifying change listeners.
      * <p>
      * If in batch mode this method will not notify listeners until {@link #commitBatch()} is called, neither will it
-     * invoke the {@link #beforeNotifyChangeListeners()} or {@link #afterNotifyChangeListeners()} hooks.
+     * invoke the {@link #beforeNotifyChangeListeners()} hook.
      * 
      * @param value
-     *            The new value of the model.
-     * @see #commitBatch()
+     *            The new value for the model.
      */
     public void setValue(V value)
     {
@@ -87,8 +92,6 @@ public class BaseModel<V> implements ComposableModel<V>
 
         if (_changeListeners != null)
             notifyChangeListeners();
-
-        afterNotifyChangeListeners();
     }
 
     @SuppressWarnings("unchecked")
@@ -104,14 +107,6 @@ public class BaseModel<V> implements ComposableModel<V>
      * change listeners. This method will not be invoked when in batch mode until {@link #commitBatch()} is called.
      */
     protected void beforeNotifyChangeListeners()
-    {
-    }
-
-    /**
-     * Hook method that will be called immediately after notifying all registered change listeners. This method will not
-     * be invoked when in batch mode until {@link #commitBatch()} is called.
-     */
-    protected void afterNotifyChangeListeners()
     {
     }
 
@@ -148,15 +143,15 @@ public class BaseModel<V> implements ComposableModel<V>
         }
     }
 
-    public void registerChangeListener(ValueChangeListener<? extends ComposableModel<V>> listener)
+    public void registerChangeListener(ValueChangeListener<? extends BaseModel<V>> listener)
     {
         if (_changeListeners == null)
-            _changeListeners = new HashSet<ValueChangeListener<? extends ComposableModel<V>>>();
+            _changeListeners = new HashSet<ValueChangeListener<? extends BaseModel<V>>>();
 
         _changeListeners.add(listener);
     }
 
-    public void removeChangeListener(ValueChangeListener<? extends ComposableModel<V>> listener)
+    public void removeChangeListener(ValueChangeListener<? extends BaseModel<V>> listener)
     {
         if (_changeListeners == null)
             return;

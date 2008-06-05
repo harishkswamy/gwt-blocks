@@ -23,11 +23,6 @@ import java.util.Map;
  */
 public class MessageModel extends BaseModel<Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>>>
 {
-    public void addMessage(FeedbackModel<?> model, String msg)
-    {
-        addMessage(model, msg, null);
-    }
-
     public void addMessage(FeedbackModel<?> valModel, String msg, FeedbackModel<?>[] msgModels)
     {
         msgModels = msgModels == null || msgModels.length == 0 ? new FeedbackModel[] { valModel } : msgModels;
