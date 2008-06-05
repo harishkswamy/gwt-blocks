@@ -4,7 +4,7 @@
 
       if (propModel == null)
       {
-          propModel = new PropertyBindingModel<${propertyTypeName}>("${propertyPath}", this, ${converterName})
+          propModel = new PropertyBindingModel<${propertyTypeName}>("${propertyPath}", this, ${textConverter})
           {
               protected void setPropertyValue()
               {
