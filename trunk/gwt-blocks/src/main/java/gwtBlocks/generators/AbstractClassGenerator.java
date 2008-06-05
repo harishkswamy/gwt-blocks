@@ -46,6 +46,8 @@ public abstract class AbstractClassGenerator extends Generator
         {
             _genClass = getType(genClassName);
 
+            initGenerator();
+
             String packageName = _genClass.getPackage().getName();
             String proxyClassName = _genClass.getSimpleSourceName() + "_Proxy";
             String proxyClassFullName = packageName + "." + proxyClassName;
@@ -103,6 +105,8 @@ public abstract class AbstractClassGenerator extends Generator
 
         return composerFactory.createSourceWriter(_context, printWriter);
     }
+
+    protected abstract void initGenerator() throws Exception;
 
     protected abstract void addImports(ClassSourceFileComposerFactory composerFactory);
 

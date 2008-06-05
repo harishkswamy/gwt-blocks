@@ -13,10 +13,13 @@
 // limitations under the License.
 package gwtBlocks.generators;
 
-import gwtBlocks.client.Converters;
+import gwtBlocks.client.TextConverters;
+import gwtBlocks.client.models.PropertyBindingModel;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Properties;
 
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
@@ -25,22 +28,15 @@ import com.google.gwt.core.ext.typeinfo.JMethod;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.NotFoundException;
 import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
-import com.google.gwt.user.rebind.SourceWriter;
 
 public class BeanBindingModelGenerator extends AbstractClassGenerator
 {
-    private static class PropertyBindingModelGenerator
+    private class PropertyBindingModelGenerator
     {
-        private static final StringBuilder _propertyModelTemplate = new StringBuilder();
+        private final StringBuilder _propertyModelTemplate = new StringBuilder();
 
-        private JClassType                 _genClass;
-        private SourceWriter               _sourceWriter;
-
-        PropertyBindingModelGenerator(JClassType genClass, SourceWriter sourceWriter) throws Exception
+        PropertyBindingModelGenerator() throws Exception
         {
-            _genClass = genClass;
-            _sourceWriter = sourceWriter;
-
             if (_propertyModelTemplate.length() == 0)
                 loadTemplate();
         }
@@ -73,17 +69,47 @@ public class BeanBindingModelGenerator extends AbstractClassGenerator
             template = template.replaceAll("\\$\\{propertyModelGetterName\\}", propModelGetterName);
             template = template.replaceAll("\\$\\{propertyPath\\}", propPath == null ? propName : propPath);
             template = template.replaceAll("\\$\\{propertyName\\}", propName);
-            template = template.replaceAll("\\$\\{converterName\\}", getConverterName(propTypeName));
+            template = template.replaceAll("\\$\\{textConverter\\}", getTextConverter(propTypeName));
             template = template.replaceAll("\\$\\{domainModelTypeName\\}", _genClass.getName());
             template = template.replaceAll("\\$\\{propertyGetterPath\\}", propGetterPath);
 
             _sourceWriter.println(template);
         }
 
-        private String getConverterName(String type)
+        private String getTextConverter(String typeName)
         {
-            String converterName = Converters.getConverterNameMap().get(type);
+            String converterName = _hook.getTextConverter(typeName);
+
+            if (converterName == null)
+            {
+                typeName = typeName.toUpperCase().replaceAll("\\.", "_");
+
+                if (_textConvertersClass.getField(typeName) != null)
+                    converterName = "TextConverters." + typeName;
+            }
+
             return converterName == null ? "null" : converterName;
+        }
+    }
+
+    private BeanBindingModelGeneratorHook _hook;
+    private JClassType                    _textConvertersClass;
+
+    @Override
+    protected void initGenerator() throws UnableToCompleteException
+    {
+        try
+        {
+            URL propFileUrl = getClass().getResource("BeanBindingModelGenerator.properties");
+            Properties props = new Properties();
+            props.load(propFileUrl.openStream());
+            _hook = (BeanBindingModelGeneratorHook) Class.forName(props.getProperty("hook-class-name")).newInstance();
+            _textConvertersClass = getType(TextConverters.class.getName());
+        }
+        catch (Exception e)
+        {
+            _logger.log(TreeLogger.ERROR, "Unable to load BeanBindingModelGeneratorHook.", e);
+            throw new UnableToCompleteException();
         }
     }
 
@@ -91,6 +117,15 @@ public class BeanBindingModelGenerator extends AbstractClassGenerator
     protected void addImports(ClassSourceFileComposerFactory composerFactory)
     {
         composerFactory.addImport("gwtBlocks.client.models.PropertyBindingModel");
+        composerFactory.addImport("gwtBlocks.client.TextConverters");
+
+        String[] imports = _hook.getImports();
+
+        if (imports == null)
+            return;
+
+        for (String imp : imports)
+            composerFactory.addImport(imp);
     }
 
     @Override
@@ -100,7 +135,7 @@ public class BeanBindingModelGenerator extends AbstractClassGenerator
 
         JClassType domainClass = getType(domainTypeName);
 
-        generatePropertyModels(_genClass, domainClass, new PropertyBindingModelGenerator(_genClass, _sourceWriter));
+        generatePropertyModels(_genClass, domainClass, new PropertyBindingModelGenerator());
     }
 
     private void generatePropertyModels(JClassType modelClass, JClassType domainClass,
@@ -112,7 +147,7 @@ public class BeanBindingModelGenerator extends AbstractClassGenerator
         for (int i = 0; i < methods.length; i++)
         {
             if (methods[i].isAbstract()
-                && methods[i].getReturnType().getSimpleSourceName().equals("PropertyBindingModel"))
+                && methods[i].getReturnType().getSimpleSourceName().equals(PropertyBindingModel.class.getSimpleName()))
             {
                 String propertyPath = getPropertyPath(methods[i]), propGetterPath = "";
                 JMethod getterMethod = null;
