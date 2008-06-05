@@ -14,7 +14,7 @@
 package gwtBlocks.client.models;
 
 import gwtBlocks.client.ConvertionException;
-import gwtBlocks.client.StringConverter;
+import gwtBlocks.client.TextConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class ListModel<T> extends ValidatableModel<List<T>>
 {
-    private StringConverter<T> _converter;
+    private TextConverter<T> _converter;
 
     /**
      * Instatiates and registers itself as a child in the provided parent.
@@ -89,7 +89,7 @@ public class ListModel<T> extends ValidatableModel<List<T>>
             return null;
 
         List<String> list = new ArrayList<String>();
-        StringConverter<T> converter = getConverter();
+        TextConverter<T> converter = getConverter();
 
         for (T val : value)
         {
@@ -104,18 +104,18 @@ public class ListModel<T> extends ValidatableModel<List<T>>
 
     /**
      * @param converter
-     *            The {@link StringConverter} that performs type conversions going either directions, from the widget to
+     *            The {@link TextConverter} that performs type conversions going either directions, from the widget to
      *            the model and the other way around.
      */
-    public void setConverter(StringConverter<T> converter)
+    public void setConverter(TextConverter<T> converter)
     {
         _converter = converter;
     }
 
     /**
-     * @return Returns this model's {@link StringConverter}.
+     * @return Returns this model's {@link TextConverter}.
      */
-    public StringConverter<T> getConverter()
+    public TextConverter<T> getConverter()
     {
         return _converter;
     }
