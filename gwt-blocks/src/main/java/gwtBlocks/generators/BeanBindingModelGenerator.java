@@ -82,16 +82,18 @@ public class BeanBindingModelGenerator extends AbstractClassGenerator
 
         private String getConverterName(String type)
         {
-            String converterName = (String) Converters.getConverterNameMap().get(type);
+            String converterName = Converters.getConverterNameMap().get(type);
             return converterName == null ? "null" : converterName;
         }
     }
 
+    @Override
     protected void addImports(ClassSourceFileComposerFactory composerFactory)
     {
         composerFactory.addImport("gwtBlocks.client.models.PropertyBindingModel");
     }
 
+    @Override
     protected void generateSource(String packageName, String genClassName) throws Exception
     {
         String domainTypeName = _genClass.getAnnotation(BindingClass.class).value().getName();

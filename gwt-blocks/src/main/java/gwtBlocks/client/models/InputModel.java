@@ -53,7 +53,7 @@ public class InputModel<T> extends ValidatableModel<T>
             // Convert
             if (_converter != null)
             {
-                getMessageModel().clear(this);
+                clearMessages();
                 value = _converter.getValue(text);
             }
             else
@@ -64,7 +64,7 @@ public class InputModel<T> extends ValidatableModel<T>
         }
         catch (ConvertionException e)
         {
-            getMessageModel().addMessage(this, e.getMessage());
+            addMessage(e.getMessage(), null);
         }
     }
 

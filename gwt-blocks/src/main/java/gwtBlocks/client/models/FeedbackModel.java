@@ -34,7 +34,7 @@ public class FeedbackModel<V> extends BaseModel<V>
         return _name;
     }
 
-    public MessageModel getMessageModel()
+    protected MessageModel getMessageModel()
     {
         return getParent() == null ? _messageModel : getParent().getMessageModel();
     }
@@ -44,7 +44,17 @@ public class FeedbackModel<V> extends BaseModel<V>
         _messageModel = model;
     }
 
-    public void detach()
+    public void addMessage(String msg, FeedbackModel<?>[] affectedModels)
+    {
+        MessageModel msgModel = getMessageModel();
+
+        if (msgModel == null)
+            return;
+
+        msgModel.addMessage(this, msg, affectedModels);
+    }
+
+    public void clearMessages()
     {
         MessageModel msgModel = getMessageModel();
 

@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Composes {@link ComposableModel}s into a single {@link BaseModel}.
+ * Composes {@link BaseModel}s into a single {@link BaseModel}.
  * 
  * @author hkrishna
  */
@@ -27,11 +27,11 @@ public class CompositeModel<V> extends ValidatableModel<V>
     /**
      * An immutable {@link Iterator} that iterates over the children.
      */
-    private static class ChildIterator implements Iterator<ComposableModel<?>>
+    private static class ChildIterator implements Iterator<BaseModel<?>>
     {
-        private Iterator<ComposableModel<?>> _itr;
+        private Iterator<BaseModel<?>> _itr;
 
-        private ChildIterator(Map<String, ComposableModel<?>> children)
+        private ChildIterator(Map<String, BaseModel<?>> children)
         {
             _itr = children.values().iterator();
         }
@@ -41,7 +41,7 @@ public class CompositeModel<V> extends ValidatableModel<V>
             return _itr.hasNext();
         }
 
-        public ComposableModel<?> next()
+        public BaseModel<?> next()
         {
             return _itr.next();
         }
@@ -52,7 +52,7 @@ public class CompositeModel<V> extends ValidatableModel<V>
         }
     }
 
-    private Map<String, ComposableModel<?>> _children;
+    private Map<String, BaseModel<?>> _children;
 
     /**
      * Adds the provided child to this model if it is not already present and sets this model as the parent in the
@@ -63,12 +63,12 @@ public class CompositeModel<V> extends ValidatableModel<V>
      * @param child
      *            Child to be added.
      */
-    public void addChild(String key, ComposableModel<?> child)
+    public void addChild(String key, BaseModel<?> child)
     {
         if (child == null)
             return;
 
-        Map<String, ComposableModel<?>> children = getOrCreateChildren();
+        Map<String, BaseModel<?>> children = getOrCreateChildren();
 
         if (children.put(key, child) == null)
             child.setParent(key, this);
@@ -86,7 +86,7 @@ public class CompositeModel<V> extends ValidatableModel<V>
         if (_children == null)
             return;
 
-        ComposableModel<?> child = _children.remove(key);
+        BaseModel<?> child = _children.remove(key);
 
         if (child != null)
             child.setParent(key, null);
@@ -98,7 +98,7 @@ public class CompositeModel<V> extends ValidatableModel<V>
      * @return The child identified by the provided key or null if the key is not present in the children map.
      */
     @SuppressWarnings("unchecked")
-    public <C extends ComposableModel<?>> C getChild(String key)
+    public <C extends BaseModel<?>> C getChild(String key)
     {
         if (_children == null)
             return null;
@@ -109,7 +109,7 @@ public class CompositeModel<V> extends ValidatableModel<V>
     /**
      * @return An {@link Iterator} that iterates over this model's children. The returned iterator disallows mutations.
      */
-    public Iterator<ComposableModel<?>> getChildIterator()
+    public Iterator<BaseModel<?>> getChildIterator()
     {
         if (_children == null)
             return null;
@@ -123,10 +123,11 @@ public class CompositeModel<V> extends ValidatableModel<V>
      * @param child
      *            The child that is notifying of its value change.
      */
-    public void childValueChanged(ComposableModel<?> child)
+    public void childValueChanged(BaseModel<?> child)
     {
     }
 
+    @Override
     protected void beforeNotifyChangeListeners()
     {
         super.beforeNotifyChangeListeners();
@@ -134,14 +135,14 @@ public class CompositeModel<V> extends ValidatableModel<V>
         if (_children == null)
             return;
 
-        for (ComposableModel<?> child : _children.values())
+        for (BaseModel<?> child : _children.values())
             child.parentValueChanged();
     }
 
-    private Map<String, ComposableModel<?>> getOrCreateChildren()
+    private Map<String, BaseModel<?>> getOrCreateChildren()
     {
         if (_children == null)
-            _children = new HashMap<String, ComposableModel<?>>();
+            _children = new HashMap<String, BaseModel<?>>();
 
         return _children;
     }

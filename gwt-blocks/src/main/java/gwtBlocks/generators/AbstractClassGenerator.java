@@ -35,6 +35,7 @@ public abstract class AbstractClassGenerator extends Generator
 
     private GeneratorContext _context;
 
+    @Override
     public String generate(TreeLogger logger, GeneratorContext context, String genClassName)
         throws UnableToCompleteException
     {
