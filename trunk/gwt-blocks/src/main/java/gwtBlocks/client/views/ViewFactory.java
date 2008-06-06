@@ -15,22 +15,46 @@ package gwtBlocks.client.views;
 
 import gwtBlocks.client.models.InputModel;
 
+import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
+
 /**
  * @author hkrishna
  */
 public class ViewFactory
 {
-    public <M extends InputModel<String>> TextBoxView<M> newStringBox(M model, String name, String styleName)
+    public <M extends InputModel<? extends String>> TextBoxView<TextBox, M> newStringBox(M model, String name)
     {
         model.setName(name);
 
-        return new TextBoxView<M>(model);
+        TextBox widget = new TextBox();
+        widget.addStyleDependentName("String");
+
+        return new TextBoxView<TextBox, M>(widget, model);
     }
 
-    public <M extends InputModel<? extends Number>> TextBoxView<M> newNumberBox(M model, String name, String styleName)
+    public <M extends InputModel<? extends Number>> TextBoxView<TextBox, M> newNumberBox(M model, String name)
     {
         model.setName(name);
 
-        return new TextBoxView<M>(model);
+        TextBox widget = new TextBox();
+        widget.addStyleDependentName("Number");
+
+        return new TextBoxView<TextBox, M>(widget, model);
+    }
+
+    public <M extends InputModel<? extends String>> TextBoxView<PasswordTextBox, M> newPasswordBox(M model, String name)
+    {
+        model.setName(name);
+
+        return new TextBoxView<PasswordTextBox, M>(new PasswordTextBox(), model);
+    }
+
+    public <M extends InputModel<? extends String>> TextBoxView<TextArea, M> newTextArea(M model, String name)
+    {
+        model.setName(name);
+
+        return new TextBoxView<TextArea, M>(new TextArea(), model);
     }
 }
