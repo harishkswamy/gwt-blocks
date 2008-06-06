@@ -15,28 +15,44 @@ package gwtBlocks.client.views;
 
 import gwtBlocks.client.models.InputModel;
 
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author hkrishna
  */
-public class TextBoxView<M extends InputModel<?>> extends TextBoxBaseView<M>
+public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends BaseView<M> implements CanEnable
 {
-    private static TextBox buildTextBox()
+    public TextBoxView(final W textWidget, M model)
     {
-        TextBox textBox = new TextBox();
-        textBox.addStyleName("blk-TextBoxView");
+        textWidget.addChangeListener(new ChangeListener()
+        {
+            public void onChange(Widget sender)
+            {
+                getModel().setText(textWidget.getText());
+            }
+        });
 
-        return textBox;
+        initWidget(textWidget);
+        setModel(model);
     }
 
-    TextBoxView(M model)
+    @SuppressWarnings("unchecked")
+    @Override
+    public W getWidget()
     {
-        super(buildTextBox(), model);
+        return (W) super.getWidget();
     }
 
-    public TextBox getTextBox()
+    @Override
+    public void valueChanged(M model)
     {
-        return (TextBox) getTextWidget();
+        getWidget().setText(model.getText());
+    }
+
+    public void setEnabled(boolean flag)
+    {
+        getWidget().setEnabled(flag);
     }
 }
