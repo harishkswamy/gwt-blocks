@@ -85,7 +85,7 @@ public class BeanBindingModelGenerator extends AbstractClassGenerator
                 typeName = typeName.toUpperCase().replaceAll("\\.", "_");
 
                 if (_textConvertersClass.getField(typeName) != null)
-                    converterName = "TextConverters." + typeName;
+                    converterName = TextConverters.class.getSimpleName() + "." + typeName;
             }
 
             return converterName == null ? "null" : converterName;

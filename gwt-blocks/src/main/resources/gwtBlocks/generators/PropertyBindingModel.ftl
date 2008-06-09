@@ -6,16 +6,16 @@
       {
           propModel = new PropertyBindingModel<${propertyTypeName}>("${propertyPath}", this, ${textConverter})
           {
+              @Override
               protected void setPropertyValue()
               {
-                  ${domainModelTypeName} parent = getParent();
-                  parent.getValue().${propertyGetterPath}set${propertyName}(getValue());
+                  this.<${domainModelTypeName}>getParent().getValue().${propertyGetterPath}set${propertyName}(getValue());
               }
 
+              @Override
               protected ${propertyTypeName} getPropertyValue()
               {
-                  ${domainModelTypeName} parent = getParent();
-                  return parent.getValue().${propertyGetterPath}get${propertyName}();
+                  return this.<${domainModelTypeName}>getParent().getValue().${propertyGetterPath}get${propertyName}();
               }
           };
       }
