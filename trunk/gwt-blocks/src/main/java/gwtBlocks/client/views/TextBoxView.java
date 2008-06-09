@@ -26,6 +26,15 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
 {
     public TextBoxView(final W textWidget, M model)
     {
+        super(model, textWidget);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Widget buildView(Object... args)
+    {
+        final W textWidget = (W) args[0];
+        
         textWidget.addChangeListener(new ChangeListener()
         {
             public void onChange(Widget sender)
@@ -34,8 +43,7 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
             }
         });
 
-        initWidget(textWidget);
-        setModel(model);
+        return textWidget;
     }
 
     @SuppressWarnings("unchecked")
