@@ -17,6 +17,7 @@ import gwtBlocks.client.ValueChangeListener;
 import gwtBlocks.client.models.BaseModel;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author hkrishna
@@ -24,6 +25,17 @@ import com.google.gwt.user.client.ui.Composite;
 public abstract class BaseView<M extends BaseModel<?>> extends Composite implements ValueChangeListener<M>
 {
     private M _model;
+
+    protected BaseView(M model)
+    {
+        this(model, (Object[]) null);
+    }
+
+    protected BaseView(M model, Object... args)
+    {
+        initWidget(buildView(args));
+        setModel(model);
+    }
 
     public void setModel(M model)
     {
@@ -47,4 +59,6 @@ public abstract class BaseView<M extends BaseModel<?>> extends Composite impleme
     public void valueChanged(M model)
     {
     }
+
+    protected abstract Widget buildView(Object... args);
 }
