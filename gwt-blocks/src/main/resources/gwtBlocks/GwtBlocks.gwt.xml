@@ -18,9 +18,13 @@
 	<!-- Inherit the core Web Toolkit stuff.                  -->
 	<inherits name='com.google.gwt.user.User'/>
 
+    <source path="client" />
+    <source path="shared" />
+    
+    <stylesheet src="gwtBlocks/GwtBlocks.css" />
+
     <generate-with class="gwtBlocks.generators.BeanBindingModelGenerator">
         <when-type-assignable class="gwtBlocks.client.models.BeanBindingModel" />
     </generate-with>
-	<!-- Specify the app entry point class.                   -->
   
 </module>
