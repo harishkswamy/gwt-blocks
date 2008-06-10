@@ -69,7 +69,7 @@ public class TableBuilder
 
     public TableBuilder newFormTable()
     {
-        return newTable().padding(3);
+        return newTable().spacing(2).padding(2);
     }
 
     public TableBuilder reset(int rowNum)
