@@ -60,7 +60,7 @@ module GwtBlocksProject
     @client_deps
   end
 	
-	def init_project(options={})
+	def init_gwt_project(options={})
 	  project.group = options[:group] || GROUP
 	  project.version = options[:version] || VERSION
 
@@ -75,7 +75,7 @@ module GwtBlocksProject
     yield if block_given?
 	end
 
-	def build_project(options={})
+	def build_java_project(options={})
 	  compile.options.source = options[:java_version] || '1.5'
 	  compile.options.target = options[:java_version] || '1.5'
 
@@ -87,7 +87,7 @@ module GwtBlocksProject
   
   def build_gwt_project(module_name, options={})
 
-    build_project options
+    build_java_project options
 
     build do
       Java::Commands.java 'com.google.gwt.dev.GWTCompiler', '-out', 'target/gwt/out', '-gen', 'target/gwt/gen', module_name,
