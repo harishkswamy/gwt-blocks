@@ -16,7 +16,7 @@ module GwtBlocksProject
 
   GROUP   = 'com.google.code'
   NAME    = 'gwt-blocks'
-  VERSION = '1.0.0'
+  VERSION = '2.0.0'
   
   GWT_BLOCKS_CLIENT_LIB = "#{GROUP}:#{NAME}:jar:client:#{VERSION}"
   GWT_BLOCKS_SERVER_LIB = "#{GROUP}:#{NAME}:jar:server:#{VERSION}"
@@ -30,10 +30,6 @@ module GwtBlocksProject
     Buildr.repositories.remote << 'http://mirrors.ibiblio.org/pub/mirrors/maven2'
   end
   
-  def local_dev?
-    Buildr.environment == 'local-dev'
-  end
-  
   def source_deps
     return @source_deps if defined? @source_deps
     @source_deps = ['org.slf4j:slf4j-api:jar:1.5.0']
@@ -42,7 +38,7 @@ module GwtBlocksProject
   
   def test_deps
     return @test_deps if defined? @test_deps
-    @test_deps = %w{ org.objenesis:objenesis:jar:1.0 }
+    @test_deps = %w{ cglib:cglib-nodep:jar:2.1_3  org.objenesis:objenesis:jar:1.0 }
     @test_deps << Buildr.group( %w{ jmock  jmock-legacy }, :under => 'org.jmock', :version => '2.4.0' )
     @test_deps << Buildr.group( %w{ hamcrest-core  hamcrest-library }, :under => 'org.hamcrest', :version => '1.1' )
     @test_deps << runtime_deps
@@ -59,10 +55,16 @@ module GwtBlocksProject
     @client_deps << GWT_BLOCKS_CLIENT_LIB if project.name != NAME
     @client_deps
   end
-	
-	def init_gwt_project(options={})
+
+  def init_java_project(options={})
 	  project.group = options[:group] || GROUP
 	  project.version = options[:version] || VERSION
+
+    yield if block_given?
+  end
+  
+	def init_gwt_project(options={})
+	  init_java_project options
 
     artifacts artifact(GWT_USER).from(Buildr.settings.user['gwt_user'])
     artifacts artifact(GWT_WINDOWS).from(Buildr.settings.user['gwt_windows'])
@@ -76,18 +78,30 @@ module GwtBlocksProject
 	end
 
 	def build_java_project(options={})
-	  compile.options.source = options[:java_version] || '1.5'
-	  compile.options.target = options[:java_version] || '1.5'
+	  build_java options
 
-    compile.with(source_deps)
-	  test.with(test_deps)
+    package :jar
 
     yield if block_given?
 	end
   
+  def build_gwt_module(options={})
+    build_java options
+    
+    client_jar = package(:jar, :classifier => 'client').clean
+    client_jar.include('target/classes', :as => '.').exclude('target/classes/**/server/**/*')
+    client_jar.include('target/resources', :as => '.').exclude('target/resources/**/server/**/*')
+    client_jar.include('src/main/java/*').exclude('src/main/java/**/server/**/*')
+    
+    server_jar = package(:jar, :classifier => 'server').clean
+    server_jar.include('target/classes', :as => '.').exclude('**/client/**/*', '**/generators/**/*')
+    server_jar.include('target/resources', :as => '.').exclude('**/public/**/*', '**/*.gwt.xml')
+    
+    yield if block_given?
+  end
+  
   def build_gwt_project(module_name, options={})
-
-    build_java_project options
+    build_java options
 
     build do
       Java::Commands.java 'com.google.gwt.dev.GWTCompiler', '-out', 'target/gwt/out', '-gen', 'target/gwt/gen', module_name,
@@ -105,11 +119,24 @@ module GwtBlocksProject
     war.path('WEB-INF/lib').include(artifacts(source_deps)).exclude(artifacts(client_deps))
 
     task :deploy => ['package'] do
-      unzip('target/webapp' => war).extract
+      FileUtils.rm_rf('target/temp')
+      unzip('target/temp' => war).extract
+      FileUtils.mkdir_p('target/webapp')
+      FileUtils.rm_rf Dir.glob('target/webapp/*')
+      FileUtils.cp_r('target/temp/.', 'target/webapp')
     end
 
+    yield if block_given?
   end
 
+private
+  def build_java(options)
+	  compile.options.source = options[:java_version] || '1.5'
+	  compile.options.target = options[:java_version] || '1.5'
+
+    compile.with(source_deps)
+	  test.with(test_deps)
+  end
 end
 
 class Buildr::Project
