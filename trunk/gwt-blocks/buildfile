@@ -16,18 +16,9 @@ require 'gwt-blocks-buildr'
 desc 'The GWT-Blocks project'
 define 'gwt-blocks' do
 
-  init_project :version => '1.0.0'
+  init_gwt_project
 
-  build_project 'gwtBlocks.GwtBlocks'
-  
-  client_jar = package(:jar, :classifier => 'client').clean
-  client_jar.include('target/classes', :as => '.').exclude('target/classes/**/server/**/*')
-  client_jar.include('target/resources', :as => '.').exclude('target/resources/**/server/**/*')
-  client_jar.include('src/main/java/*').exclude('src/main/java/**/server/**/*')
-  
-  server_jar = package(:jar, :classifier => 'server').clean
-  server_jar.include('target/classes', :as => '.').exclude('**/client/**/*', '**/generators/**/*')
-  server_jar.include('target/resources', :as => '.').exclude('**/public/**/*', '**/*.gwt.xml')
+  build_gwt_module
   
   help do
     puts '-----------------------------------------------------------------------'
