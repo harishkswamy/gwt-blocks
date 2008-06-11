@@ -22,7 +22,8 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * @author hkrishna
  */
-public abstract class BaseView<M extends BaseModel<?>> extends Composite implements ValueChangeListener<M>
+public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends Composite implements
+    ValueChangeListener<M>
 {
     private M _model;
 
@@ -35,6 +36,13 @@ public abstract class BaseView<M extends BaseModel<?>> extends Composite impleme
     {
         initWidget(buildView(args));
         setModel(model);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public W getWidget()
+    {
+        return (W) super.getWidget();
     }
 
     public void setModel(M model)
@@ -60,5 +68,5 @@ public abstract class BaseView<M extends BaseModel<?>> extends Composite impleme
     {
     }
 
-    protected abstract Widget buildView(Object... args);
+    protected abstract W buildView(Object... args);
 }

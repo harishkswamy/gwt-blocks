@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * @author hkrishna
  */
-public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends BaseView<M> implements CanEnable
+public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends BaseView<W, M> implements CanEnable
 {
     public TextBoxView(final W textWidget, M model)
     {
@@ -31,7 +31,7 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Widget buildView(Object... args)
+    protected W buildView(Object... args)
     {
         final W textWidget = (W) args[0];
         
@@ -44,13 +44,6 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
         });
 
         return textWidget;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public W getWidget()
-    {
-        return (W) super.getWidget();
     }
 
     @Override
