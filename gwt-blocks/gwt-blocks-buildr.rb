@@ -94,8 +94,8 @@ module GwtBlocksProject
     client_jar.include('src/main/java/*').exclude('src/main/java/**/server/**/*')
     
     server_jar = package(:jar, :classifier => 'server').clean
-    server_jar.include('target/classes', :as => '.').exclude('**/client/**/*', '**/generators/**/*')
-    server_jar.include('target/resources', :as => '.').exclude('**/public/**/*', '**/*.gwt.xml')
+    server_jar.include('target/classes', :as => '.').exclude(*client_classes)
+    server_jar.include('target/resources', :as => '.').exclude(*client_resources)
     
     yield if block_given?
   end
@@ -113,8 +113,8 @@ module GwtBlocksProject
     war.include("target/gwt/out/#{module_name}", :as => '.')
     war.include('src/main/webapp/*')
     war.path('WEB-INF/classes').tap do |path|
-      path.include('target/classes', :as => '.').exclude('**/client/*')
-      path.include('target/resources', :as => '.').exclude('**/public/**/*')
+      path.include('target/classes', :as => '.').exclude(*client_classes)
+      path.include('target/resources', :as => '.').exclude(*client_resources)
     end
     war.path('WEB-INF/lib').include(artifacts(source_deps)).exclude(artifacts(client_deps))
 
@@ -136,6 +136,14 @@ private
 
     compile.with(source_deps)
 	  test.with(test_deps)
+  end
+
+  def client_classes
+    ['**/client/**/*', '**/generators/**/*']
+  end
+
+  def client_resources
+    ['**/public/**/*', '**/*.gwt.xml']
   end
 end
 
