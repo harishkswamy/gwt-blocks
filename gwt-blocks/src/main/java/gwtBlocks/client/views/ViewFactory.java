@@ -13,6 +13,7 @@
 // limitations under the License.
 package gwtBlocks.client.views;
 
+import gwtBlocks.client.models.BaseModel;
 import gwtBlocks.client.models.InputModel;
 
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -56,5 +57,10 @@ public class ViewFactory
         model.setName(name);
 
         return new TextBoxView<TextArea, M>(new TextArea(), model);
+    }
+
+    public DynamicLabelView newDynamicLabel(BaseModel<String> model)
+    {
+        return new DynamicLabelView(model);
     }
 }
