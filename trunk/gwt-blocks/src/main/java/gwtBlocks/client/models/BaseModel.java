@@ -46,13 +46,13 @@ public class BaseModel<V>
         if (parent == _parent)
             return;
 
-        if (_parent != null)
-            _parent.removeChild(key);
-
         _parent = parent;
 
         if (_parent != null)
             _parent.addChild(key, this);
+
+        // In case this model is created after the parent model value is set.
+        parentValueChanged();
     }
 
     @SuppressWarnings("unchecked")

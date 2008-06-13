@@ -55,55 +55,76 @@ public class CompositeModel<V> extends ValidatableModel<V>
     private Map<String, BaseModel<?>> _children;
 
     /**
-     * Adds the provided child to this model if it is not already present and sets this model as the parent in the
-     * provided child. If this model already contains the provided child, this method does nothing.
+     * Adds the provided child to this model and sets this model as the parent in the provided child. If this model
+     * already contains the provided child, this method simply returns the child.
      * 
-     * @param key
-     *            The key to identify the provided child in the children map.
+     * @param name
+     *            The name to identify the provided child in the children map.
      * @param child
      *            Child to be added.
+     * @return The child for the provided key.
      */
-    public void addChild(String key, BaseModel<?> child)
+    public <C extends BaseModel<?>> C addChild(String name, C child)
     {
         if (child == null)
-            return;
+            return null;
 
         Map<String, BaseModel<?>> children = getOrCreateChildren();
 
-        if (children.put(key, child) == null)
-            child.setParent(key, this);
+        BaseModel<?> oldChild = children.put(name, child);
+
+        if (child != oldChild)
+        {
+            releaseChild(oldChild);
+            adoptChild(name, child);
+        }
+
+        return child;
     }
 
     /**
      * Removes the provided child from this model if it is present and clears the parent of the provided child. If this
      * model does not contain the provided child, this method does nothing.
      * 
-     * @param key
-     *            The key that identifies the child to be removed in the children map.
-     */
-    public void removeChild(String key)
-    {
-        if (_children == null)
-            return;
-
-        BaseModel<?> child = _children.remove(key);
-
-        if (child != null)
-            child.setParent(key, null);
-    }
-
-    /**
-     * @param key
-     *            The key that identifies the requested child in the children map.
-     * @return The child identified by the provided key or null if the key is not present in the children map.
+     * @param name
+     *            The name that identifies the child to be removed in the children map.
      */
     @SuppressWarnings("unchecked")
-    public <C extends BaseModel<?>> C getChild(String key)
+    public <C extends BaseModel<?>> C removeChild(String name)
     {
         if (_children == null)
             return null;
 
-        return (C) _children.get(key);
+        C child = (C) _children.remove(name);
+
+        return releaseChild(child);
+    }
+
+    private void adoptChild(String name, BaseModel<?> child)
+    {
+        child.setParent(name, this);
+    }
+
+    private <C extends BaseModel<?>> C releaseChild(C child)
+    {
+        if (child != null)
+            child.setParent(null, null);
+
+        return child;
+    }
+
+    /**
+     * @param name
+     *            The name that identifies the child in the children map.
+     * @return The child identified by the given name or null if there is no child present with the given name.
+     */
+    @SuppressWarnings("unchecked")
+    public <C extends BaseModel<?>> C getChild(String name)
+    {
+        if (_children == null)
+            return null;
+
+        return (C) _children.get(name);
     }
 
     /**

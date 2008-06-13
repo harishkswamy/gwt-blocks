@@ -27,22 +27,7 @@ public abstract class PropertyBindingModel<V> extends InputModel<V>
     {
         super(key, parent);
 
-        if (parent == null)
-            throw new IllegalArgumentException(this + " needs a non null BeanBindingModel parent.");
-
         setConverter(propertyConverter);
-
-        // In case this property model is created after the bean model value is set.
-        parentValueChanged();
-    }
-
-    @Override
-    public void setParent(String key, CompositeModel<?> parent)
-    {
-        if (!(parent instanceof BeanBindingModel))
-            throw new IllegalArgumentException(this + " only accepts BeanBindingModel as parent. Argument:" + parent);
-
-        super.setParent(key, parent);
     }
 
     @Override
@@ -50,9 +35,7 @@ public abstract class PropertyBindingModel<V> extends InputModel<V>
     {
         super.parentValueChanged();
 
-        BeanBindingModel<?> beanModel = getParent();
-
-        if (beanModel.getValue() == null)
+        if (getParent().getValue() == null)
             setValue(null);
         else
             setValue(getPropertyValue());
