@@ -17,6 +17,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -33,7 +35,16 @@ public class WidgetFactory
         return table;
     }
 
-    public static final FlexTable addCaption(FlexTable table, String caption)
+    public static final Grid newGrid()
+    {
+        Grid grid = new Grid();
+        grid.setCellSpacing(0);
+        grid.setCellPadding(0);
+
+        return grid;
+    }
+
+    public static final HTMLTable addCaption(HTMLTable table, String caption)
     {
         if (caption == null)
             return table;
