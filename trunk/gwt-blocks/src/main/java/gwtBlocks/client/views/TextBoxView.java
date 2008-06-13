@@ -31,7 +31,7 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
 
     @SuppressWarnings("unchecked")
     @Override
-    protected W buildView(Object... args)
+    protected W buildView(M model, Object... args)
     {
         final W textWidget = (W) args[0];
         

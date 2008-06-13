@@ -34,7 +34,7 @@ public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends
 
     protected BaseView(M model, Object... args)
     {
-        initWidget(buildView(args));
+        initWidget(buildView(model, args));
         setModel(model);
     }
     
@@ -68,5 +68,5 @@ public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends
     {
     }
 
-    protected abstract W buildView(Object... args);
+    protected abstract W buildView(M model, Object... args);
 }
