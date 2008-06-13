@@ -50,13 +50,19 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  * @author hkrishna
  */
-public abstract class HTMLTableBuilder<T extends HTMLTable>
+abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTMLTable>
 {
     protected T _table;
     protected int _row, _col, _colSpan;
     protected boolean _applyRowStyle, _swapRowStyle, _hStretch, _vStretch;
 
-    protected HTMLTableBuilder<T> build(T table)
+    @SuppressWarnings("unchecked")
+    private B builder()
+    {
+        return (B) this;
+    }
+
+    public B build(T table)
     {
         _table = table;
 
@@ -64,7 +70,7 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
 
         movePointer(0);
 
-        return this;
+        return builder();
     }
 
     protected void movePointer(int row)
@@ -74,93 +80,93 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
         _colSpan = 1;
     }
 
-    public HTMLTableBuilder<T> formLayout()
+    public B formLayout()
     {
         return spacing(2).padding(2);
     }
-    
+
     // Table methods ============================================================
 
     /**
      * Sets the table's &lt;caption&gt;.
      */
-    public HTMLTableBuilder<T> caption(String caption)
+    public B caption(String caption)
     {
         WidgetFactory.addCaption(_table, caption);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's <code>cellspacing</code> attribute.
      */
-    public HTMLTableBuilder<T> spacing(int spacing)
+    public B spacing(int spacing)
     {
         _table.setCellSpacing(spacing);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's <code>cellpadding</code> attribute.
      */
-    public HTMLTableBuilder<T> padding(int padding)
+    public B padding(int padding)
     {
         _table.setCellPadding(padding);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's width.
      */
-    public HTMLTableBuilder<T> widthT(String width)
+    public B widthT(String width)
     {
         _table.setWidth(width);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's height.
      */
-    public HTMLTableBuilder<T> heightT(String height)
+    public B heightT(String height)
     {
         _table.setHeight(height);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's width and height.
      */
-    public HTMLTableBuilder<T> sizeT(String width, String height)
+    public B sizeT(String width, String height)
     {
         _table.setWidth(width);
         _table.setHeight(height);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's primary style name.
      */
-    public HTMLTableBuilder<T> styleT(String styleName)
+    public B styleT(String styleName)
     {
         if (!StringUtils.isEmpty(styleName))
             _table.setStylePrimaryName(styleName);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the table's border size.
      */
-    public HTMLTableBuilder<T> border(int width)
+    public B border(int width)
     {
         _table.setBorderWidth(width);
 
-        return this;
+        return builder();
     }
 
     /**
@@ -176,61 +182,61 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
     /**
      * Turns the horizontal stretch switch on and implicitly turns the vertical stretch switch off.
      */
-    public HTMLTableBuilder<T> hStretch()
+    public B hStretch()
     {
         _hStretch = true;
         _vStretch = false;
 
-        return this;
+        return builder();
     }
 
     /**
      * Turns the vertical stretch switch on and implicitly turns the horizontal stretch switch off.
      */
-    public HTMLTableBuilder<T> vStretch()
+    public B vStretch()
     {
         _hStretch = false;
         _vStretch = true;
 
-        return this;
+        return builder();
     }
 
     /**
      * Turns both the horizontal and vertical stretch switches on.
      */
-    public HTMLTableBuilder<T> stretch()
+    public B stretch()
     {
         _hStretch = _vStretch = true;
 
-        return this;
+        return builder();
     }
 
     /**
      * Turns both the horizontal and vertical stretch switches off.
      */
-    public HTMLTableBuilder<T> dontStretch()
+    public B dontStretch()
     {
         _hStretch = _vStretch = false;
 
-        return this;
+        return builder();
     }
 
     /**
      * Turns the row style switch on.
      */
-    public HTMLTableBuilder<T> applyRowStyle()
+    public B applyRowStyle()
     {
         _applyRowStyle = true;
 
         setRowStyle();
 
-        return this;
+        return builder();
     }
 
     /**
      * Turns row style switch on and swaps the even and odd row style names.
      */
-    public HTMLTableBuilder<T> swapRowStyle()
+    public B swapRowStyle()
     {
         _swapRowStyle = !_swapRowStyle;
 
@@ -240,12 +246,12 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
     /**
      * Turns the row style switch off.
      */
-    public HTMLTableBuilder<T> dontApplyRowStyle()
+    public B dontApplyRowStyle()
     {
         _applyRowStyle = false;
         _swapRowStyle = false;
 
-        return this;
+        return builder();
     }
 
     // Cell methods ==============================================================
@@ -253,38 +259,38 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
     /**
      * Sets the cell's width.
      */
-    public HTMLTableBuilder<T> widthC(String width)
+    public B widthC(String width)
     {
         _table.getCellFormatter().setWidth(_row, _col, width);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's height.
      */
-    public HTMLTableBuilder<T> heightC(String height)
+    public B heightC(String height)
     {
         _table.getCellFormatter().setHeight(_row, _col, height);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's width and height.
      */
-    public HTMLTableBuilder<T> sizeC(String width, String height)
+    public B sizeC(String width, String height)
     {
         _table.getCellFormatter().setWidth(_row, _col, width);
         _table.getCellFormatter().setHeight(_row, _col, height);
 
-        return this;
+        return builder();
     }
 
     /**
      * Allows the cell's contents to wrap.
      */
-    public HTMLTableBuilder<T> wrap()
+    public B wrap()
     {
         return wrap(true);
     }
@@ -292,103 +298,103 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
     /**
      * Disallows the cell's contents to wrap.
      */
-    public HTMLTableBuilder<T> dontWrap()
+    public B dontWrap()
     {
         return wrap(false);
     }
 
-    private HTMLTableBuilder<T> wrap(boolean wrap)
+    private B wrap(boolean wrap)
     {
         _table.getCellFormatter().setWordWrap(_row, _col, wrap);
 
-        return this;
+        return builder();
     }
 
     /**
      * Horizontally aligns the cell's contents left justified.
      */
-    public HTMLTableBuilder<T> leftC()
+    public B leftC()
     {
         _table.getCellFormatter().setHorizontalAlignment(_row, _col, ALIGN_LEFT);
 
-        return this;
+        return builder();
     }
 
     /**
      * Horizontally aligns the cell's contents centered.
      */
-    public HTMLTableBuilder<T> centerC()
+    public B centerC()
     {
         _table.getCellFormatter().setHorizontalAlignment(_row, _col, ALIGN_CENTER);
 
-        return this;
+        return builder();
     }
 
     /**
      * Horizontally aligns the cell's contents right justified.
      */
-    public HTMLTableBuilder<T> rightC()
+    public B rightC()
     {
         _table.getCellFormatter().setHorizontalAlignment(_row, _col, ALIGN_RIGHT);
 
-        return this;
+        return builder();
     }
 
     /**
      * Vertically aligns the cell's contents top justified.
      */
-    public HTMLTableBuilder<T> topC()
+    public B topC()
     {
         _table.getCellFormatter().setVerticalAlignment(_row, _col, ALIGN_TOP);
 
-        return this;
+        return builder();
     }
 
     /**
      * Vertically aligns the cell's contents centered.
      */
-    public HTMLTableBuilder<T> middleC()
+    public B middleC()
     {
         _table.getCellFormatter().setVerticalAlignment(_row, _col, ALIGN_MIDDLE);
 
-        return this;
+        return builder();
     }
 
     /**
      * Vertically aligns the cell's contents bottom justified.
      */
-    public HTMLTableBuilder<T> bottomC()
+    public B bottomC()
     {
         _table.getCellFormatter().setVerticalAlignment(_row, _col, ALIGN_BOTTOM);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's style name.
      */
-    public HTMLTableBuilder<T> styleC(String styleName)
+    public B styleC(String styleName)
     {
         if (!StringUtils.isEmpty(styleName))
             _table.getCellFormatter().setStyleName(_row, _col, styleName);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's content to the provided text.
      */
-    public HTMLTableBuilder<T> set(String text)
+    public B set(String text)
     {
         _table.setText(_row, nextCol(), text);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's content to the provided widget.
      */
-    public HTMLTableBuilder<T> set(Widget widget)
+    public B set(Widget widget)
     {
         if (_hStretch)
             widget.setWidth("100%");
@@ -398,23 +404,23 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
 
         _table.setWidget(_row, nextCol(), widget);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's content to the provided HTML.
      */
-    public HTMLTableBuilder<T> setHTML(String html)
+    public B setHTML(String html)
     {
         _table.setHTML(_row, nextCol(), html);
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the cell's content to the requested number of non-breaking spaces (&amp;nbsp;).
      */
-    public HTMLTableBuilder<T> setNbSp(int spaces)
+    public B setNbSp(int spaces)
     {
         StringBuilder b = new StringBuilder("&nbsp;");
 
@@ -423,14 +429,14 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
 
         _table.setHTML(_row, nextCol(), b.toString());
 
-        return this;
+        return builder();
     }
 
-    public HTMLTableBuilder<T> skip()
+    public B skip()
     {
         nextCol();
 
-        return this;
+        return builder();
     }
 
     private int nextCol()
@@ -448,70 +454,45 @@ public abstract class HTMLTableBuilder<T extends HTMLTable>
     /**
      * Moves the pointer to the next row.
      */
-    public HTMLTableBuilder<T> nextRow()
+    public B nextRow()
     {
         movePointer(++_row);
 
         return setRowStyle();
     }
 
-    private HTMLTableBuilder<T> setRowStyle()
+    private B setRowStyle()
     {
         if (!_applyRowStyle)
-            return this;
+            return builder();
 
         int rowNum = _swapRowStyle ? (_row + 1) % 2 : _row % 2;
 
         _table.getRowFormatter().setStyleName(_row, rowNum == 0 ? "evenRow" : "oddRow");
 
-        return this;
+        return builder();
     }
 
     /**
      * Sets the row's primary style name.
      */
-    public HTMLTableBuilder<T> styleR(String styleName)
+    public B styleR(String styleName)
     {
         if (!StringUtils.isEmpty(styleName))
             _table.getRowFormatter().setStylePrimaryName(_row, styleName);
 
-        return this;
+        return builder();
     }
 
     /**
      * Removes the rows's style name.
      */
-    public HTMLTableBuilder<T> removeRowStyle(String styleName)
+    public B removeRowStyle(String styleName)
     {
         if (!StringUtils.isEmpty(styleName))
             _table.getRowFormatter().removeStyleName(_row,
                 _table.getRowFormatter().getStylePrimaryName(_row) + '-' + styleName);
 
-        return this;
+        return builder();
     }
-
-    // Abstract methods =============================================================
-
-
-    public abstract HTMLTableBuilder<T> reset(int rowNum);
-
-    /**
-     * Removes the requested row from the table.
-     */
-    public abstract HTMLTableBuilder<T> removeRow(int index);
-
-    /**
-     * Sets the cell's row span.
-     */
-    public abstract HTMLTableBuilder<T> rowSpan(int rowSpan);
-
-    /**
-     * Sets the cell's col span.
-     */
-    public abstract HTMLTableBuilder<T> colSpan(int colSpan);
-
-    /**
-     * Sets the cell's row and col span.
-     */
-    public abstract HTMLTableBuilder<T> span(int rowSpan, int colSpan);
 }
