@@ -18,13 +18,13 @@ import com.google.gwt.user.client.ui.FlexTable;
 /**
  * @author hkrishna
  */
-public class FlexTableBuilder extends HTMLTableBuilder<FlexTable>
+public class FlexTableBuilder extends HTMLTableBuilder<FlexTableBuilder, FlexTable>
 {
     public FlexTableBuilder()
     {
         newTable();
     }
-    
+
     public FlexTableBuilder(FlexTable table)
     {
         build(table);
@@ -32,10 +32,14 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTable>
 
     public FlexTableBuilder newTable()
     {
-        return (FlexTableBuilder) build(WidgetFactory.newFlexTable());
+        return build(WidgetFactory.newFlexTable());
     }
 
-    @Override
+    /**
+     * Deletes any rows greater than the given row number and moves the internal pointer to the given row number.
+     * 
+     * @param rowNum
+     */
     public FlexTableBuilder reset(int rowNum)
     {
         while (_table.getRowCount() > rowNum)
@@ -49,7 +53,6 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTable>
     /**
      * Removes the requested row from the table.
      */
-    @Override
     public FlexTableBuilder removeRow(int index)
     {
         _table.removeRow(index);
@@ -61,7 +64,6 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTable>
     /**
      * Sets the cell's row span.
      */
-    @Override
     public FlexTableBuilder rowSpan(int rowSpan)
     {
         return span(rowSpan, 1);
@@ -70,7 +72,6 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTable>
     /**
      * Sets the cell's col span.
      */
-    @Override
     public FlexTableBuilder colSpan(int colSpan)
     {
         return span(1, colSpan);
@@ -79,7 +80,6 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTable>
     /**
      * Sets the cell's row and col span.
      */
-    @Override
     public FlexTableBuilder span(int rowSpan, int colSpan)
     {
         if (rowSpan > 1)

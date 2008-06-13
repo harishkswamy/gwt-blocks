@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Grid;
 /**
  * @author hkrishna
  */
-public class GridBuilder extends HTMLTableBuilder<Grid>
+public class GridBuilder extends HTMLTableBuilder<GridBuilder, Grid>
 {
     public GridBuilder()
     {
@@ -32,36 +32,6 @@ public class GridBuilder extends HTMLTableBuilder<Grid>
 
     public GridBuilder newGrid()
     {
-        return (GridBuilder) build(WidgetFactory.newGrid());
-    }
-
-    @Override
-    public HTMLTableBuilder<Grid> colSpan(int colSpan)
-    {
-        return this;
-    }
-
-    @Override
-    public HTMLTableBuilder<Grid> removeRow(int index)
-    {
-        return this;
-    }
-
-    @Override
-    public HTMLTableBuilder<Grid> reset(int rowNum)
-    {
-        return this;
-    }
-
-    @Override
-    public HTMLTableBuilder<Grid> rowSpan(int rowSpan)
-    {
-        return this;
-    }
-
-    @Override
-    public HTMLTableBuilder<Grid> span(int rowSpan, int colSpan)
-    {
-        return this;
+        return build(WidgetFactory.newGrid());
     }
 }
