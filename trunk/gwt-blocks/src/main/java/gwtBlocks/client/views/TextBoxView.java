@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * @author hkrishna
  */
-public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends BaseView<W, M> implements CanEnable
+public class TextBoxView<W extends TextBoxBase, M extends InputModel<V>, V> extends InputView<W, M, V> implements CanEnable
 {
     public TextBoxView(final W textWidget, M model)
     {
@@ -39,7 +39,7 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
         {
             public void onChange(Widget sender)
             {
-                getModel().setText(textWidget.getText());
+                setModelValue(textWidget.getText());
             }
         });
 
@@ -49,7 +49,7 @@ public class TextBoxView<W extends TextBoxBase, M extends InputModel<?>> extends
     @Override
     public void valueChanged(M model)
     {
-        getWidget().setText(model.getText());
+        getWidget().setText(getModelValue());
     }
 
     public void setEnabled(boolean flag)

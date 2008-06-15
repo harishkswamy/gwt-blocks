@@ -11,31 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package gwtBlocks.client.views;
+package gwtBlocks.client;
 
-import gwtBlocks.client.models.BaseModel;
-
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.Messages;
 
 /**
  * @author hkrishna
  */
-public class DynamicLabelView extends BaseView<Label, BaseModel<String>>
+public interface GwtBlocksMessages extends Messages
 {
-    public DynamicLabelView(BaseModel<String> model)
-    {
-        super(model);
-    }
-
-    @Override
-    protected Label buildView(BaseModel<String> model, Object... args)
-    {
-        return new Label();
-    }
+    GwtBlocksMessages pick = GWT.create(GwtBlocksMessages.class);
     
-    @Override
-    public void valueChanged(BaseModel<String> model)
-    {
-        getWidget().setText(model.getValue());
-    }
+    String invalidNumberFormat(String value, String format);
+    
+    String noRegisteredMessageModel(String forModel, String msg);
 }

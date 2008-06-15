@@ -13,16 +13,11 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
-import gwtBlocks.client.ConvertionException;
-import gwtBlocks.client.TextConverter;
-
 /**
  * @author hkrishna
  */
 public class InputModel<T> extends ValidatableModel<T>
 {
-    private TextConverter<T> _converter;
-
     /**
      * Instatiates and registers itself as a child in the provided parent.
      * 
@@ -34,68 +29,5 @@ public class InputModel<T> extends ValidatableModel<T>
     public InputModel(String key, CompositeModel<?> parent)
     {
         setParent(key, parent);
-    }
-
-    /**
-     * Intended to be invoked by the form widget to set the widget's text value. This method will convert the text
-     * value, validate it and invoke {@link BaseModel#setValue(Object)}.
-     * 
-     * @param text
-     *            The text value from the widget.
-     */
-    @SuppressWarnings("unchecked")
-    public void setText(String text)
-    {
-        try
-        {
-            T value = null;
-
-            // Convert
-            if (_converter != null)
-            {
-                clearMessages();
-                value = _converter.getValue(text);
-            }
-            else
-                value = (T) text; // Assuming T is String
-
-            // setValue
-            setValue(value);
-        }
-        catch (ConvertionException e)
-        {
-            addMessage(e.getMessage(), null);
-        }
-    }
-
-    /**
-     * @return The formatted text to be displayed in the widget.
-     */
-    public String getText()
-    {
-        T value = getValue();
-
-        if (_converter == null)
-            return value == null ? "" : value.toString();
-
-        return _converter.getString(value);
-    }
-
-    /**
-     * @param converter
-     *            The {@link TextConverter} that performs type conversions going either directions, from the widget to
-     *            the model and the other way around.
-     */
-    public void setConverter(TextConverter<T> converter)
-    {
-        _converter = converter;
-    }
-
-    /**
-     * @return Returns this model's {@link TextConverter}.
-     */
-    public TextConverter<T> getConverter()
-    {
-        return _converter;
     }
 }

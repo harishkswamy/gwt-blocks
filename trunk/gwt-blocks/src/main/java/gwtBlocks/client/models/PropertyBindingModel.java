@@ -13,8 +13,6 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
-import gwtBlocks.client.TextConverter;
-
 /**
  * This model binds a single value held in this model to a single property in the domain object held by the contained
  * bean model.
@@ -23,11 +21,9 @@ import gwtBlocks.client.TextConverter;
  */
 public abstract class PropertyBindingModel<V> extends InputModel<V>
 {
-    protected PropertyBindingModel(String key, BeanBindingModel<?> parent, TextConverter<V> propertyConverter)
+    protected PropertyBindingModel(String key, BeanBindingModel<?> parent)
     {
         super(key, parent);
-
-        setConverter(propertyConverter);
     }
 
     @Override

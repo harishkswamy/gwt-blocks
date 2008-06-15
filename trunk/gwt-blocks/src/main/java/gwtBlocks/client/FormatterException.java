@@ -13,9 +13,12 @@
 // limitations under the License.
 package gwtBlocks.client;
 
-public interface TextConverter<T>
+public class FormatterException extends Exception
 {
-    T getValue(String value) throws ConvertionException;
+    private static final long serialVersionUID = 8437249168526108442L;
 
-    String getString(T value);
+    public FormatterException(String msg)
+    {
+        super(msg);
+    }
 }
