@@ -16,6 +16,7 @@ package gwtBlocks.client.views;
 import com.google.gwt.user.client.ui.FlexTable;
 
 /**
+ * @see HTMLTableBuilder
  * @author hkrishna
  */
 public class FlexTableBuilder extends HTMLTableBuilder<FlexTableBuilder, FlexTable>

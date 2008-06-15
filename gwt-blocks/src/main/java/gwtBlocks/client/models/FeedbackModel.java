@@ -13,6 +13,8 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
+import gwtBlocks.client.GwtBlocksMessages;
+
 /**
  * This is a {@link BaseModel} that wraps the {@link MessageModel} and has a name. This is a convenience model that can
  * be used to provide user feedback.
@@ -49,7 +51,7 @@ public class FeedbackModel<V> extends BaseModel<V>
         MessageModel msgModel = getMessageModel();
 
         if (msgModel == null)
-            return;
+            throw new IllegalArgumentException(GwtBlocksMessages.pick.noRegisteredMessageModel(_name, msg));
 
         msgModel.addMessage(this, msg, affectedModels);
     }

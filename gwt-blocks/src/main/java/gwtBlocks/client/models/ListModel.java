@@ -13,10 +13,6 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
-import gwtBlocks.client.ConvertionException;
-import gwtBlocks.client.TextConverter;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,99 +20,99 @@ import java.util.List;
  */
 public class ListModel<T> extends ValidatableModel<List<T>>
 {
-    private TextConverter<T> _converter;
-
-    /**
-     * Instatiates and registers itself as a child in the provided parent.
-     * 
-     * @param key
-     *            The key that identifies this model in the parent.
-     * @param parent
-     *            The parent model.
-     */
-    public ListModel(String key, CompositeModel<?> parent)
-    {
-        setParent(key, parent);
-    }
-
-    /**
-     * Intended to be invoked by the form widget to set the widget's text value. This method will convert the text
-     * value, validate it and invoke {@link BaseModel#setValue(Object)}.
-     * 
-     * @param textList
-     *            The text value from the list widget.
-     */
-    @SuppressWarnings("unchecked")
-    public void setTextList(List<String> textList)
-    {
-        try
-        {
-            List<T> value = null;
-
-            // Convert
-            if (_converter != null)
-            {
-                clearMessages();
-
-                if (textList != null)
-                {
-                    value = new ArrayList<T>();
-
-                    for (String str : textList)
-                        value.add(_converter.getValue(str));
-                }
-            }
-            else
-                value = (List<T>) textList; // Assuming T is String
-
-            // setValue
-            setValue(value);
-        }
-        catch (ConvertionException e)
-        {
-            addMessage(e.getMessage(), null);
-        }
-    }
-
-    /**
-     * @return A list of formatted strings to be displayed in the widget.
-     */
-    public List<String> getTextList()
-    {
-        List<T> value = getValue();
-
-        if (value == null)
-            return null;
-
-        List<String> list = new ArrayList<String>();
-        TextConverter<T> converter = getConverter();
-
-        for (T val : value)
-        {
-            if (converter == null)
-                list.add(val == null ? "" : val.toString());
-            else
-                list.add(converter.getString(val));
-        }
-
-        return list;
-    }
-
-    /**
-     * @param converter
-     *            The {@link TextConverter} that performs type conversions going either directions, from the widget to
-     *            the model and the other way around.
-     */
-    public void setConverter(TextConverter<T> converter)
-    {
-        _converter = converter;
-    }
-
-    /**
-     * @return Returns this model's {@link TextConverter}.
-     */
-    public TextConverter<T> getConverter()
-    {
-        return _converter;
-    }
+//    private Converter<T> _converter;
+//
+//    /**
+//     * Instatiates and registers itself as a child in the provided parent.
+//     * 
+//     * @param key
+//     *            The key that identifies this model in the parent.
+//     * @param parent
+//     *            The parent model.
+//     */
+//    public ListModel(String key, CompositeModel<?> parent)
+//    {
+//        setParent(key, parent);
+//    }
+//
+//    /**
+//     * Intended to be invoked by the form widget to set the widget's text value. This method will convert the text
+//     * value, validate it and invoke {@link BaseModel#setValue(Object)}.
+//     * 
+//     * @param textList
+//     *            The text value from the list widget.
+//     */
+//    @SuppressWarnings("unchecked")
+//    public void setTextList(List<String> textList)
+//    {
+//        try
+//        {
+//            List<T> value = null;
+//
+//            // Convert
+//            if (_converter != null)
+//            {
+//                clearMessages();
+//
+//                if (textList != null)
+//                {
+//                    value = new ArrayList<T>();
+//
+//                    for (String str : textList)
+//                        value.add(_converter.getValue(str));
+//                }
+//            }
+//            else
+//                value = (List<T>) textList; // Assuming T is String
+//
+//            // setValue
+//            setValue(value);
+//        }
+//        catch (FormatterException e)
+//        {
+//            addMessage(e.getMessage(), null);
+//        }
+//    }
+//
+//    /**
+//     * @return A list of formatted strings to be displayed in the widget.
+//     */
+//    public List<String> getTextList()
+//    {
+//        List<T> value = getValue();
+//
+//        if (value == null)
+//            return null;
+//
+//        List<String> list = new ArrayList<String>();
+//        Converter<T> converter = getConverter();
+//
+//        for (T val : value)
+//        {
+//            if (converter == null)
+//                list.add(val == null ? "" : val.toString());
+//            else
+//                list.add(converter.getString(val));
+//        }
+//
+//        return list;
+//    }
+//
+//    /**
+//     * @param converter
+//     *            The {@link Converter} that performs type conversions going either directions, from the widget to
+//     *            the model and the other way around.
+//     */
+//    public void setConverter(Converter<T> converter)
+//    {
+//        _converter = converter;
+//    }
+//
+//    /**
+//     * @return Returns this model's {@link Converter}.
+//     */
+//    public Converter<T> getConverter()
+//    {
+//        return _converter;
+//    }
 }

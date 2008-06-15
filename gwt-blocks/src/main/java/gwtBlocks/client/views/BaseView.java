@@ -34,8 +34,15 @@ public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends
 
     protected BaseView(M model, Object... args)
     {
+        _model = model;
         initWidget(buildView(model, args));
-        setModel(model);
+    }
+
+    @Override
+    protected void onLoad()
+    {
+        super.onLoad();
+        setModel(_model);
     }
     
     @SuppressWarnings("unchecked")

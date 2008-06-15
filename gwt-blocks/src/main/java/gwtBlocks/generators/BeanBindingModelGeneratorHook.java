@@ -6,6 +6,4 @@ package gwtBlocks.generators;
 public interface BeanBindingModelGeneratorHook
 {
     String[] getImports();
-
-    String getTextConverter(String propTypeName);
 }

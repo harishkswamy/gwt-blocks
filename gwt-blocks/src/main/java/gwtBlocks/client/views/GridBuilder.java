@@ -16,6 +16,7 @@ package gwtBlocks.client.views;
 import com.google.gwt.user.client.ui.Grid;
 
 /**
+ * @see HTMLTableBuilder
  * @author hkrishna
  */
 public class GridBuilder extends HTMLTableBuilder<GridBuilder, Grid>
