@@ -27,11 +27,6 @@ public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends
 {
     private M _model;
 
-    protected BaseView(M model)
-    {
-        this(model, (Object[]) null);
-    }
-
     protected BaseView(M model, Object... args)
     {
         _model = model;
