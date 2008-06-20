@@ -112,6 +112,11 @@ public class ViewFactory
         return view;
     }
 
+    public <M extends InputModel<V>, V> DynamicHTMLView<M, V> newDynamicHTML(M model)
+    {
+        return newDynamicHTML(model, null, null, null);
+    }
+
     public <M extends InputModel<V>, V> DynamicHTMLView<M, V> newDynamicHTML(M model, String prefix, String suffix,
         String blankValue)
     {
