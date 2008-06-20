@@ -13,11 +13,9 @@
 // limitations under the License.
 package gwtBlocks.client;
 
+import gwtBlocks.client.views.FlexTableBuilder;
+
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -27,14 +25,10 @@ public class ProcessingIndicator extends Composite
 {
     public ProcessingIndicator()
     {
-        Label label = new Label("Processing...");
+        FlexTableBuilder b = new FlexTableBuilder();
+        b.styleC("image").set("").middleC().set("Processing...");
 
-        HorizontalPanel hPanel = new HorizontalPanel();
-        hPanel.add(new HTML(GwtBlocksImageBundle.pick.processingIndicator().getHTML()));
-        hPanel.add(label);
-        hPanel.setCellVerticalAlignment(label, HasVerticalAlignment.ALIGN_MIDDLE);
-
-        initWidget(hPanel);
+        initWidget(b.getTable());
         setStyleName("gbk-ProcessingIndicator");
     }
 
