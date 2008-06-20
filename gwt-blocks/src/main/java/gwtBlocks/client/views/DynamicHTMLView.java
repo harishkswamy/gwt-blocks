@@ -36,7 +36,15 @@ public class DynamicHTMLView<M extends InputModel<V>, V> extends InputView<HTML,
     protected HTML buildView(M model, Object... args)
     {
         _prefix = (String) args[0];
+
+        if (_prefix == null)
+            _prefix = "";
+
         _suffix = (String) args[1];
+
+        if (_suffix == null)
+            _suffix = "";
+
         _blankValue = (String) args[2];
 
         return new HTML();
