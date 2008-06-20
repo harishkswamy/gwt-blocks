@@ -27,9 +27,9 @@ import com.google.gwt.user.client.ui.Widget;
  * <p>
  * The builder builds the table sequentially starting from top left working its way to bottom right. The builder
  * maintains an internal pointer that points to the cell that's currently being built. Requests sent to the builder are
- * fulfilled against the cell currently being pointed to by the internal pointer. The pointer can be moved to the next
- * cell by calling one of the <code>set</code> or <code>skip</code> methods. The pointer can be moved to the next
- * row by calling {@link #nextRow()}.
+ * fulfilled against the cell currently being pointed to by the internal pointer. Setting the contents of the cell via
+ * one of the <code>set</code> methods automatically moves the pointer to the next cell and hence it must be the last
+ * operation on the cell. The pointer can be moved to the next row by calling {@link #nextRow()}.
  * <p>
  * Methods that are common to more than one HTML element like <code>width</code> and <code>style</code> have a
  * suffix in their names to identify the element they apply to. Methods that have a "<code>T</code>" suffix apply to
@@ -384,9 +384,9 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
     /**
      * Sets the cell's content to the provided text.
      */
-    public B set(String text)
+    public B set(Object obj)
     {
-        _table.setText(_row, nextCol(), text);
+        _table.setText(_row, nextCol(), obj == null ? "" : obj.toString());
 
         return builder();
     }
@@ -432,13 +432,6 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
         return builder();
     }
 
-    public B skip()
-    {
-        nextCol();
-
-        return builder();
-    }
-
     private int nextCol()
     {
         int col = _col;
@@ -468,7 +461,7 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
 
         int rowNum = _swapRowStyle ? (_row + 1) % 2 : _row % 2;
 
-        _table.getRowFormatter().setStyleName(_row, rowNum == 0 ? "evenRow" : "oddRow");
+        _table.getRowFormatter().setStyleName(_row, rowNum == 0 ? "oddRow" : "evenRow");
 
         return builder();
     }
