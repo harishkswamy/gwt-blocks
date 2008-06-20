@@ -26,30 +26,32 @@ import com.google.gwt.user.client.Command;
  */
 public abstract class Barrier
 {
-    private int                 _parties;
-    private Map<String, Object> _results;
+    private int                 _pendingParties;
+    private Map<String, Object> _resultMap;
     private List<Command>       _taskList;
     private boolean             _failed;
 
     public Barrier(int parties)
     {
-        _parties = parties;
+        _pendingParties = parties;
     }
 
-    public void arrive(String party, Object result)
+    public void arrive(String party, Object... results)
     {
-        if (_failed)
+        if (_failed || _pendingParties == 0)
             return;
 
-        Map<String, Object> results = getResultsMap();
-        results.put(party, result);
+        Map<String, Object> resultMap = getResultsMap();
+        
+        if (results != null && results.length > 0)
+            resultMap.put(party, results.length == 1 ? results[0] : results);
 
-        _parties--;
+        _pendingParties--;
 
-        if (_parties == 0)
+        if (_pendingParties == 0)
         {
-            _results = null;
-            proceed(results);
+            _resultMap = null;
+            proceed(resultMap);
 
             if (_taskList != null)
             {
@@ -61,11 +63,10 @@ public abstract class Barrier
         }
     }
 
-    public void execute(Command task)
+    public void onProceedExecute(Command task)
     {
-        if (_parties == 0)
+        if (_pendingParties == 0)
             task.execute();
-
         else
             getTaskList().add(task);
     }
@@ -73,16 +74,21 @@ public abstract class Barrier
     public void failed(String name)
     {
         _failed = true;
-        _results = null;
+        _resultMap = null;
         _taskList = null;
     }
 
+    public boolean isComplete()
+    {
+        return _pendingParties == 0;
+    }
+    
     private Map<String, Object> getResultsMap()
     {
-        if (_results == null)
-            _results = new HashMap<String, Object>();
+        if (_resultMap == null)
+            _resultMap = new HashMap<String, Object>();
 
-        return _results;
+        return _resultMap;
     }
 
     private List<Command> getTaskList()
