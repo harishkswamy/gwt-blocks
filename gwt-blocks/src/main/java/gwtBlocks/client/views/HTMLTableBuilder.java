@@ -82,7 +82,7 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
 
     public B formLayout()
     {
-        return spacing(2).padding(2);
+        return spacing(3).padding(0);
     }
 
     // Table methods ============================================================
@@ -379,6 +379,17 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
             _table.getCellFormatter().setStyleName(_row, _col, styleName);
 
         return builder();
+    }
+
+    /**
+     * Sets the cell's content to the provided text and clips it if it doesn't fit in the cell.
+     */
+    public B setClipped(Object obj)
+    {
+        _table.getCellFormatter().setVisible(_row, _col, true);
+        _table.getCellFormatter().getElement(_row, _col).getStyle().setProperty("overflow", "hidden");
+
+        return set(obj);
     }
 
     /**
