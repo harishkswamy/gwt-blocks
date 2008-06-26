@@ -65,4 +65,9 @@ public class FeedbackModel<V> extends BaseModel<V>
 
         msgModel.clear(this);
     }
+
+    public boolean hasErrors()
+    {
+        return getMessageModel().hasErrors();
+    }
 }
