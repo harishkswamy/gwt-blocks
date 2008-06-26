@@ -13,91 +13,72 @@
 // limitations under the License.
 package gwtBlocks.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.user.client.Command;
 
 /**
  * @author hkrishna
  */
-public abstract class Barrier
+public class Barrier
 {
-    private int                 _pendingParties;
-    private Map<String, Object> _resultMap;
-    private List<Command>       _taskList;
-    private boolean             _failed;
+    private int     _pendingParties;
+    private Command _proceedTask;
+    private boolean _failed;
 
     public Barrier(int parties)
     {
         _pendingParties = parties;
     }
+    
+    public void reset(int parties)
+    {
+        _pendingParties = parties;
+        _proceedTask = null;
+        _failed = false;
+    }
 
-    public void arrive(String party, Object... results)
+    public void arrive()
     {
         if (_failed || _pendingParties == 0)
             return;
-
-        Map<String, Object> resultMap = getResultsMap();
-        
-        if (results != null && results.length > 0)
-            resultMap.put(party, results.length == 1 ? results[0] : results);
 
         _pendingParties--;
 
         if (_pendingParties == 0)
         {
-            _resultMap = null;
-            proceed(resultMap);
-
-            if (_taskList != null)
+            try
             {
-                for (Iterator<Command> itr = _taskList.iterator(); itr.hasNext();)
-                    itr.next().execute();
-
-                _taskList = null;
+                proceed();
+                
+                if (_proceedTask != null)
+                    _proceedTask.execute();
+            }
+            finally
+            {
+                reset(0);
             }
         }
     }
 
-    public void onProceedExecute(Command task)
+    public void onProceed(Command task)
     {
         if (_pendingParties == 0)
             task.execute();
         else
-            getTaskList().add(task);
+            _proceedTask = task;
     }
 
-    public void failed(String name)
+    public void failed()
     {
         _failed = true;
-        _resultMap = null;
-        _taskList = null;
     }
 
     public boolean isComplete()
     {
         return _pendingParties == 0;
     }
-    
-    private Map<String, Object> getResultsMap()
+
+    protected void proceed()
     {
-        if (_resultMap == null)
-            _resultMap = new HashMap<String, Object>();
-
-        return _resultMap;
+        // Template method
     }
-
-    private List<Command> getTaskList()
-    {
-        if (_taskList == null)
-            _taskList = new ArrayList<Command>();
-
-        return _taskList;
-    }
-
-    protected abstract void proceed(Map<String, Object> results);
 }
