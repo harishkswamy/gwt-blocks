@@ -15,10 +15,14 @@ package gwtBlocks.client.views;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -26,6 +30,13 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class WidgetFactory
 {
+    private static MouseListener _iconMouseListener;
+
+    private WidgetFactory()
+    {
+        // Static class
+    }
+
     public static final FlexTable newFlexTable()
     {
         FlexTable table = new FlexTable();
@@ -62,5 +73,82 @@ public class WidgetFactory
         dPanel.setWidget(widget);
 
         return dPanel;
+    }
+
+    public static Image newIconButton(final String imageName, String tip, ClickListener listener)
+    {
+        Image.prefetch("gwtBlocks/images/iconButtonHoverBkg.jpg");
+        Image.prefetch("gwtBlocks/images/iconButtonDownBkg.jpg");
+
+        String simpleName = imageName.substring(imageName.lastIndexOf('/') + 1, imageName.lastIndexOf('.'));
+
+        final Image icon = new Image(imageName);
+        icon.setSize("20px", "20px");
+        icon.setStylePrimaryName("gbk-IconButton");
+        icon.addStyleDependentName(simpleName);
+        icon.setTitle(tip);
+
+        if (listener != null)
+            icon.addClickListener(listener);
+
+        icon.addMouseListener(getIconMouseListener(simpleName));
+
+        return icon;
+    }
+
+    public static void disableIconButton(Image icon)
+    {
+        icon.removeMouseListener(getIconMouseListener(null));
+        icon.addStyleName("disable");
+        int end = icon.getUrl().lastIndexOf("Off.gif");
+        if (end == -1)
+            icon.setUrl(icon.getUrl().substring(0, icon.getUrl().lastIndexOf(".gif")) + "Off.gif");
+    }
+
+    public static void enableIconButton(Image icon)
+    {
+        icon.removeMouseListener(getIconMouseListener(null)); // This is to avoid duplicate listners.
+        icon.addMouseListener(getIconMouseListener(null));
+        icon.removeStyleName("disable");
+        int end = icon.getUrl().lastIndexOf("Off.gif");
+        if (end > -1)
+            icon.setUrl(icon.getUrl().substring(0, end) + ".gif");
+    }
+
+    private static MouseListener getIconMouseListener(final String suffix)
+    {
+        if (_iconMouseListener == null)
+            _iconMouseListener = new MouseListenerAdapter()
+            {
+                public void onMouseDown(Widget sender, int x, int y)
+                {
+                    sender.addStyleDependentName("down");
+                    if (suffix != null)
+                        sender.addStyleDependentName("down-" + suffix);
+                }
+
+                public void onMouseUp(Widget sender, int x, int y)
+                {
+                    sender.removeStyleDependentName("down");
+                    sender.removeStyleDependentName("down-" + suffix);
+                }
+
+                public void onMouseEnter(Widget sender)
+                {
+                    sender.addStyleDependentName("hover");
+                    if (suffix != null)
+                        sender.addStyleDependentName("hover-" + suffix);
+                }
+
+                public void onMouseLeave(Widget sender)
+                {
+                    sender.removeStyleDependentName("hover");
+                    sender.removeStyleDependentName("down");
+                    sender.removeStyleDependentName("hover-" + suffix);
+                    sender.removeStyleDependentName("down-" + suffix);
+                }
+            };
+
+        return _iconMouseListener;
     }
 }

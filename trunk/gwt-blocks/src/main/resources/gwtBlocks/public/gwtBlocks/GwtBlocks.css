@@ -25,10 +25,27 @@ body.processing {
 	text-align: right;
 }
 
-/* = Table styles ===================================== */
+/*= Icon Button Styles =====================================*/
+
+.gbk-IconButton {
+}
+
+.gbk-IconButton-hover {
+	background: url(images/iconButtonHoverBkg.jpg) no-repeat center;
+}
+
+.gbk-IconButton-down {
+	background: url(images/iconButtonDownBkg.jpg) no-repeat center;
+}
+
+/* = Table styles ========================================== */
 
 .gbk-TableView {
 	background-color: #FFF;
+}
+
+.gbk-TableView table {
+	table-layout: fixed; /* This is not getting set from code */
 }
 
 .gbk-TableView .header {
@@ -52,7 +69,7 @@ body.processing {
 }
 
 .gbk-TableView .body tr.evenRow {
-	background-color: #DEF;
+	background-color: #F0F8FF;
 }
 
 .gbk-TableView td {
