@@ -28,7 +28,6 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
         _indicator = indicator;
     }
 
-    private String  _name;
     private Barrier _barrier;
 
     public FeedbackAsyncCallback()
@@ -36,11 +35,10 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
         beginCall();
     }
 
-    public FeedbackAsyncCallback(String name, Barrier barrier)
+    public FeedbackAsyncCallback(Barrier barrier)
     {
         this();
 
-        _name = name;
         _barrier = barrier;
     }
 
@@ -69,7 +67,7 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
         callFailed(caught);
 
         if (_barrier != null)
-            _barrier.failed(_name);
+            _barrier.failed();
     }
 
     public void onSuccess(T result)
@@ -79,7 +77,7 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
             callPassed(result);
 
             if (_barrier != null)
-                _barrier.arrive(_name, result);
+                _barrier.arrive();
         }
         finally
         {
