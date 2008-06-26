@@ -15,7 +15,7 @@ package gwtBlocks.client;
 
 import gwtBlocks.client.models.ValidatableModel;
 
-public interface Validator<T>
+public interface Validator<V>
 {
-    void validate(ValidatableModel<T> value) throws ValidationException;
+    void validate(ValidatableModel<V> model) throws ValidationException;
 }
