@@ -13,9 +13,13 @@
 // limitations under the License.
 package gwtBlocks.client.views;
 
+import java.util.List;
+
 import gwtBlocks.client.TextFormatter;
 import gwtBlocks.client.TextFormatters;
+import gwtBlocks.client.models.BaseModel;
 import gwtBlocks.client.models.InputModel;
+import gwtBlocks.shared.Lookup;
 
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -121,5 +125,20 @@ public class ViewFactory
         String blankValue)
     {
         return new DynamicHTMLView<M, V>(model, prefix, suffix, blankValue);
+    }
+
+    public <M extends InputModel<V>, V extends Lookup> SuggestBoxView<M, V> newSuggestBox(M model, List<V> suggestions)
+    {
+        SuggestBoxView<M, V> view = new SuggestBoxView<M, V>(model, " ");
+
+        view.setSuggestions(suggestions);
+
+        return view;
+    }
+
+    public <M extends InputModel<V>, V extends Lookup> SuggestBoxView<M, V> newSuggestBox(M model,
+        BaseModel<List<V>> suggestionsModel, String whiteSpaceChars)
+    {
+        return new SuggestBoxView<M, V>(model, suggestionsModel, whiteSpaceChars);
     }
 }
