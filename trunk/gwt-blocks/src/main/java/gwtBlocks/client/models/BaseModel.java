@@ -41,6 +41,15 @@ public class BaseModel<V>
     private boolean                                          _inBatchMode;
     private CompositeModel<?>                                _parent;
 
+    public BaseModel()
+    {
+    }
+    
+    public BaseModel(String key, CompositeModel<?> parent)
+    {
+        setParent(key, parent);
+    }
+    
     public void setParent(String key, CompositeModel<?> parent)
     {
         if (parent == _parent)
