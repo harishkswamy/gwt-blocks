@@ -1,10 +1,10 @@
   public PropertyBindingModel<${propertyTypeName}> ${propertyModelGetterName}()
   {
-      PropertyBindingModel<${propertyTypeName}> propModel = getChild("${propertyPath}");
+      PropertyBindingModel<${propertyTypeName}> propModel = getChild("__${propertyPath}");
 
       if (propModel == null)
       {
-          propModel = new PropertyBindingModel<${propertyTypeName}>("${propertyPath}", this)
+          propModel = new PropertyBindingModel<${propertyTypeName}>("__${propertyPath}", this)
           {
               @Override
               protected void setPropertyValue()

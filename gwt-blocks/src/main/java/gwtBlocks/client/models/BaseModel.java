@@ -13,6 +13,7 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
+import gwtBlocks.client.ValueChangeHistoryListener;
 import gwtBlocks.client.ValueChangeListener;
 
 import java.util.HashSet;
@@ -36,20 +37,21 @@ import java.util.Set;
  */
 public class BaseModel<V>
 {
-    private V                                                _value;
-    private Set<ValueChangeListener<? extends BaseModel<V>>> _changeListeners;
-    private boolean                                          _inBatchMode;
-    private CompositeModel<?>                                _parent;
+    private V                                                          _value, _oldValue;
+    private Set<ValueChangeListener<? extends BaseModel<V>>>           _changeListeners;
+    private Set<ValueChangeHistoryListener<? extends BaseModel<V>, V>> _changeHistoryListeners;
+    private boolean                                                    _inBatchMode;
+    private CompositeModel<?>                                          _parent;
 
     public BaseModel()
     {
     }
-    
+
     public BaseModel(String key, CompositeModel<?> parent)
     {
         setParent(key, parent);
     }
-    
+
     public void setParent(String key, CompositeModel<?> parent)
     {
         if (parent == _parent)
@@ -78,7 +80,7 @@ public class BaseModel<V>
      * Sets this model's value and notifies registered change listeners. Sub classes can implement
      * {@link #beforeNotifyChangeListeners()} method to hook behavior before notifying change listeners.
      * <p>
-     * If in batch mode this method will not notify listeners until {@link #commitBatch()} is called, neither will it
+     * If in batch mode this method will not notify listeners until {@link #endBatch()} is called, neither will it
      * invoke the {@link #beforeNotifyChangeListeners()} hook.
      * 
      * @param value
@@ -86,12 +88,13 @@ public class BaseModel<V>
      */
     public void setValue(V value)
     {
+        _oldValue = _value;
         _value = value;
 
         if (_parent != null)
             _parent.childValueChanged(this);
 
-        if (!_inBatchMode)
+        if (!isInBatchMode())
             fireValueChanged();
     }
 
@@ -99,21 +102,30 @@ public class BaseModel<V>
     {
         beforeNotifyChangeListeners();
 
-        if (_changeListeners != null)
-            notifyChangeListeners();
+        notifyChangeListeners();
     }
 
     @SuppressWarnings("unchecked")
     private void notifyChangeListeners()
     {
-        // Notify model change listeners
-        for (ValueChangeListener listener : _changeListeners)
-            listener.valueChanged(this);
+        if (_changeListeners != null)
+        {
+            for (ValueChangeListener listener : _changeListeners)
+                listener.valueChanged(this);
+        }
+
+        if (_changeHistoryListeners != null)
+        {
+            for (ValueChangeHistoryListener listener : _changeHistoryListeners)
+                listener.valueChanged(this, _oldValue);
+        }
+
+        _oldValue = null;
     }
 
     /**
      * Hook method that will be called immediately after this model's value is set but before notifying any registered
-     * change listeners. This method will not be invoked when in batch mode until {@link #commitBatch()} is called.
+     * change listeners. This method will not be invoked when in batch mode until {@link #endBatch()} is called.
      */
     protected void beforeNotifyChangeListeners()
     {
@@ -127,7 +139,7 @@ public class BaseModel<V>
     /**
      * Starting a batch stops the changes to this model value from being propagated to listeners.
      * 
-     * @see #commitBatch()
+     * @see #endBatch()
      */
     public void startBatch()
     {
@@ -137,21 +149,26 @@ public class BaseModel<V>
     /**
      * If in batch mode, this method notifies all listeners and ends the batch.
      */
-    public void commitBatch()
+    public void endBatch()
     {
-        if (!_inBatchMode)
-            return;
-
-        try
-        {
-            fireValueChanged();
-        }
-        finally
+        if (isInBatchMode())
         {
             _inBatchMode = false;
+
+            fireValueChanged();
         }
     }
 
+    protected boolean isInBatchMode()
+    {
+        return _inBatchMode || (_parent != null && _parent.isInBatchMode());
+    }
+
+    protected void save()
+    {
+        
+    }
+    
     public void registerChangeListener(ValueChangeListener<? extends BaseModel<V>> listener)
     {
         if (_changeListeners == null)
@@ -166,5 +183,21 @@ public class BaseModel<V>
             return;
 
         _changeListeners.remove(listener);
+    }
+
+    public void registerChangeHistoryListener(ValueChangeHistoryListener<? extends BaseModel<V>, V> listener)
+    {
+        if (_changeHistoryListeners == null)
+            _changeHistoryListeners = new HashSet<ValueChangeHistoryListener<? extends BaseModel<V>, V>>();
+
+        _changeHistoryListeners.add(listener);
+    }
+
+    public void removeChangeHistoryListener(ValueChangeHistoryListener<? extends BaseModel<V>, V> listener)
+    {
+        if (_changeHistoryListeners == null)
+            return;
+
+        _changeHistoryListeners.remove(listener);
     }
 }

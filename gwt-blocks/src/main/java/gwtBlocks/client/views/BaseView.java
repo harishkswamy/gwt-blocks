@@ -37,9 +37,10 @@ public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends
     protected void onLoad()
     {
         super.onLoad();
-        setModel(_model);
+
+        registerChangeListener();
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public W getWidget()
@@ -54,9 +55,15 @@ public abstract class BaseView<W extends Widget, M extends BaseModel<?>> extends
 
         _model = model;
 
+        registerChangeListener();
+    }
+
+    private void registerChangeListener()
+    {
         if (_model != null)
         {
             _model.registerChangeListener(this);
+
             valueChanged(_model);
         }
     }

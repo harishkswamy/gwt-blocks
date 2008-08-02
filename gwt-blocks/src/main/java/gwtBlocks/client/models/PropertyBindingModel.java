@@ -37,21 +37,10 @@ public abstract class PropertyBindingModel<V> extends InputModel<V>
             setValue(getPropertyValue());
     }
 
-    @Override
-    protected void beforeNotifyChangeListeners()
-    {
-        super.beforeNotifyChangeListeners();
-
-        BeanBindingModel<?> parent = getParent();
-
-        if (parent.isAutoCommit())
-            commit();
-    }
-
     /**
-     * This method will commit the value in this model to the bean model.
+     * This method will commit the value in this model to the domain object.
      */
-    public void commit()
+    public void save()
     {
         if (getParent().getValue() != null)
             setPropertyValue();

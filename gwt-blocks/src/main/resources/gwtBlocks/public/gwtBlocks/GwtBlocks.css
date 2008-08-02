@@ -25,16 +25,20 @@ body.processing {
 	text-align: right;
 }
 
-/*= Icon Button Styles =====================================*/
-
-.gbk-IconButton {
+.gbk-buttonGroupSeparator {
+	color: #CCC;
 }
 
-.gbk-IconButton-hover {
+/*= Icon Button Styles =====================================*/
+
+.gbk-iconButton {
+}
+
+.gbk-iconButton-hover {
 	background: url(images/iconButtonHoverBkg.jpg) no-repeat center;
 }
 
-.gbk-IconButton-down {
+.gbk-iconButton-down {
 	background: url(images/iconButtonDownBkg.jpg) no-repeat center;
 }
 

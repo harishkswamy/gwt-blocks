@@ -13,13 +13,13 @@
 // limitations under the License.
 package gwtBlocks.client.views;
 
-import java.util.List;
-
 import gwtBlocks.client.TextFormatter;
 import gwtBlocks.client.TextFormatters;
 import gwtBlocks.client.models.BaseModel;
 import gwtBlocks.client.models.InputModel;
 import gwtBlocks.shared.Lookup;
+
+import java.util.List;
 
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -127,9 +127,14 @@ public class ViewFactory
         return new DynamicHTMLView<M, V>(model, prefix, suffix, blankValue);
     }
 
-    public <M extends InputModel<V>, V extends Lookup> SuggestBoxView<M, V> newSuggestBox(M model, List<V> suggestions)
+    public <M extends InputModel<V>, V extends Lookup> SuggestBoxView<M, V> newSuggestBox(M model)
     {
-        SuggestBoxView<M, V> view = new SuggestBoxView<M, V>(model, " ");
+        return new SuggestBoxView<M, V>(model, " ");
+    }
+
+    public <M extends InputModel<V>, V extends Lookup> SuggestBoxView<M, V> newSuggestBox(M model, List<V> suggestions, String whiteSpaceChars)
+    {
+        SuggestBoxView<M, V> view = new SuggestBoxView<M, V>(model, whiteSpaceChars);
 
         view.setSuggestions(suggestions);
 
@@ -140,5 +145,47 @@ public class ViewFactory
         BaseModel<List<V>> suggestionsModel, String whiteSpaceChars)
     {
         return new SuggestBoxView<M, V>(model, suggestionsModel, whiteSpaceChars);
+    }
+
+    public <M extends InputModel<V>, L extends InputModel<List<V>>, V extends Lookup> DropDownBoxView<M, L, V> newDropDownBox(
+        M selectedModel, L listModel)
+    {
+        return new DropDownBoxView<M, L, V>(selectedModel, listModel);
+    }
+
+    public <M extends InputModel<V>, V extends Lookup> DropDownBoxView<M, InputModel<List<V>>, V> newDropDownBox(
+        M selectedModel)
+    {
+        return new DropDownBoxView<M, InputModel<List<V>>, V>(selectedModel);
+    }
+
+    public <M extends InputModel<List<V>>, L extends InputModel<List<V>>, V extends Lookup> ListBoxView<M, L, V> newListBox(
+        M selectedModel, L listModel)
+    {
+        return new ListBoxView<M, L, V>(selectedModel, listModel);
+    }
+
+    public <M extends InputModel<List<V>>, V extends Lookup> ListBoxView<M, InputModel<List<V>>, V> newListBox(
+        M selectedModel)
+    {
+        return new ListBoxView<M, InputModel<List<V>>, V>(selectedModel);
+    }
+
+    public <M extends InputModel<V>, V> RadioButtonView<M, V> newRadioButton(M model, String label, V value,
+        String group)
+    {
+        return new RadioButtonView<M, V>(model, label, value, group);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <M extends InputModel<V>, V> RadioButtonView<M, V>[] newRadioGroup(M model, String[] labels, V[] values,
+        String group)
+    {
+        RadioButtonView<M, V>[] buttons = new RadioButtonView[labels.length];
+
+        for (int i = 0; i < labels.length; i++)
+            buttons[i] = new RadioButtonView<M, V>(model, labels[i], values[i], group);
+
+        return buttons;
     }
 }

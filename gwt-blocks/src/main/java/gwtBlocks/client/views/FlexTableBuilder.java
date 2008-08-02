@@ -37,7 +37,7 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTableBuilder, FlexTab
     }
 
     /**
-     * Deletes any rows greater than the given row number and moves the internal pointer to the given row number.
+     * Deletes any rows greater or equal to the given row number and moves the internal pointer to the given row number.
      * 
      * @param rowNum
      */

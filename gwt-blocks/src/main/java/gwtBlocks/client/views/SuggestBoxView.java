@@ -49,7 +49,7 @@ public class SuggestBoxView<M extends InputModel<V>, V extends Lookup> extends B
 
     @SuppressWarnings("unchecked")
     @Override
-    protected SuggestBox buildView(final M model, Object... args)
+    protected SuggestBox buildView(M model, Object... args)
     {
         String whiteSpaceChars = (String) args[0];
 
@@ -74,7 +74,7 @@ public class SuggestBoxView<M extends InputModel<V>, V extends Lookup> extends B
         {
             public void onSuggestionSelected(SuggestionEvent event)
             {
-                model.setValue(_lookupMap.get(event.getSelectedSuggestion().getReplacementString()));
+                getModel().setValue(_lookupMap.get(event.getSelectedSuggestion().getReplacementString()));
             }
         });
 
@@ -82,7 +82,7 @@ public class SuggestBoxView<M extends InputModel<V>, V extends Lookup> extends B
         {
             public void onChange(Widget sender)
             {
-                model.setValue(_lookupMap.get(sb.getText()));
+                getModel().setValue(_lookupMap.get(sb.getText()));
             }
         });
 
@@ -100,8 +100,8 @@ public class SuggestBoxView<M extends InputModel<V>, V extends Lookup> extends B
 
         for (V item : suggestions)
         {
-            _lookupMap.put(item.getName(), item);
-            _oracle.add(item.getName());
+            _lookupMap.put(item.getLookupName(), item);
+            _oracle.add(item.getLookupName());
         }
     }
 
@@ -111,6 +111,6 @@ public class SuggestBoxView<M extends InputModel<V>, V extends Lookup> extends B
         if (model.getValue() == null)
             getWidget().setText(null);
         else
-            getWidget().setText(model.getValue().getName());
+            getWidget().setText(model.getValue().getLookupName());
     }
 }
