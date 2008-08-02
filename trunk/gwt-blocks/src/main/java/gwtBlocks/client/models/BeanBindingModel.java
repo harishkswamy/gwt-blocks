@@ -17,15 +17,13 @@ import gwtBlocks.client.ValidationException;
 import gwtBlocks.generators.BindingClass;
 import gwtBlocks.generators.BindingProperty;
 
-import java.util.Iterator;
-
 /**
  * This model is a collection of {@link PropertyBindingModel}s each of which binds to a property in the binding object
  * wrapped by this model. The binding enables automatic convertion, validation and transfer of user input to the domain
  * object.
  * <p>
  * This is a buffered model, meaning values stored in this model are not transferred to the domain object until
- * {@link #commit()} is called. However, buffering can be turned off by turning auto commit on via
+ * {@link #save()} is called. However, buffering can be turned off by turning auto commit on via
  * {@link #setAutoCommit(boolean)}.
  * <p>
  * This model is automatically generated based on the conventions outlined below.
@@ -55,74 +53,36 @@ import java.util.Iterator;
  * 
  * @author hkrishna
  */
-public abstract class BeanBindingModel<V> extends CompositeModel<V> implements BindingModel
+public abstract class BeanBindingModel<V> extends CompositeModel<V>
 {
-    private interface Task
-    {
-        void execute(PropertyBindingModel<?> model);
-    }
-
     private boolean _autoCommit;
-
-    public BeanBindingModel()
-    {
-        setName("");
-    }
 
     public void setAutoCommit(boolean autoCommit)
     {
         _autoCommit = autoCommit;
     }
-
-    public boolean isAutoCommit()
-    {
-        return _autoCommit;
-    }
-
-    /**
-     * This method will transfer the model's buferred bound property values onto the domain object.
-     */
-    public void commit()
+    
+    @Override
+    public void childValueChanged(BaseModel<?> child)
     {
         if (_autoCommit)
-            return;
-
-        doForEachChild(new Task()
-        {
-            public void execute(PropertyBindingModel<?> model)
-            {
-                model.commit();
-            }
-        });
-    }
-
-    private void doForEachChild(Task task)
-    {
-        Iterator<BaseModel<?>> itr = getChildIterator();
-
-        if (itr == null)
-            return;
-
-        while (itr.hasNext())
-        {
-            BaseModel<?> model = itr.next();
-
-            if (model instanceof PropertyBindingModel)
-                task.execute((PropertyBindingModel<?>) model);
-        }
+            child.save();
     }
 
     /**
-     * This method will {@link #commit()} if and only if there are no validation errors.
+     * This method will {@link #save()} if and only if there are no validation errors.
      * 
      * @throws ValidationException
      *             When there are validation errors.
      */
     public void save() throws ValidationException
     {
-        if (getMessageModel().hasErrors())
+        MessageModel msgModel = getMessageModel();
+
+        if (msgModel != null && msgModel.hasErrors())
             throw new ValidationException("");
 
-        commit();
+        if (!_autoCommit)
+            super.save();
     }
 }

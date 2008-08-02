@@ -18,7 +18,7 @@ package gwtBlocks.shared;
  */
 public interface Lookup
 {
-    Integer getId();
+    String getLookupName();
 
-    String getName();
+    String getLookupValue();
 }

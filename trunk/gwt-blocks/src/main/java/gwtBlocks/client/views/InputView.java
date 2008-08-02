@@ -60,7 +60,7 @@ public abstract class InputView<W extends Widget, M extends InputModel<V>, V> ex
                 value = _formatter.parse(text);
             }
             else
-                value = (V) text; // Assuming T is String
+                value = (V) text; // Assuming V is String
 
             // setValue
             getModel().setValue(value);

@@ -13,6 +13,8 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
+import gwtBlocks.client.ValidationException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -149,9 +151,9 @@ public class CompositeModel<V> extends ValidatableModel<V>
     }
 
     @Override
-    protected void beforeNotifyChangeListeners()
+    public void setValue(V value)
     {
-        super.beforeNotifyChangeListeners();
+        super.setValue(value);
 
         if (_children == null)
             return;
@@ -160,11 +162,32 @@ public class CompositeModel<V> extends ValidatableModel<V>
             child.parentValueChanged();
     }
 
+    @Override
+    public void endBatch()
+    {
+        if (_children != null)
+        {
+            for (BaseModel<?> child : _children.values())
+                child.endBatch();
+        }
+
+        super.endBatch();
+    }
+
     private Map<String, BaseModel<?>> getOrCreateChildren()
     {
         if (_children == null)
             _children = new HashMap<String, BaseModel<?>>();
 
         return _children;
+    }
+
+    public void save() throws ValidationException
+    {
+        if (_children == null)
+            return;
+
+        for (BaseModel<?> model : _children.values())
+            model.save();
     }
 }

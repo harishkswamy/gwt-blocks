@@ -18,6 +18,11 @@ package gwtBlocks.client.models;
  */
 public class InputModel<T> extends ValidatableModel<T>
 {
+    public InputModel()
+    {
+        
+    }
+    
     /**
      * Instatiates and registers itself as a child in the provided parent.
      * 

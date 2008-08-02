@@ -13,6 +13,8 @@
 // limitations under the License.
 package gwtBlocks.client.views;
 
+import gwtBlocks.shared.StringUtils;
+
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -20,9 +22,14 @@ import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.MouseListenerAdapter;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SourcesTableEvents;
+import com.google.gwt.user.client.ui.TableListener;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -84,7 +91,7 @@ public class WidgetFactory
 
         final Image icon = new Image(imageName);
         icon.setSize("20px", "20px");
-        icon.setStylePrimaryName("gbk-IconButton");
+        icon.setStylePrimaryName("gbk-iconButton");
         icon.addStyleDependentName(simpleName);
         icon.setTitle(tip);
 
@@ -150,5 +157,51 @@ public class WidgetFactory
             };
 
         return _iconMouseListener;
+    }
+
+    public static Widget newIconTextButton(String imageName, String text, final ClickListener listener)
+    {
+        FlexTableBuilder builder = new FlexTableBuilder().styleT("gbk-iconTextButton").formLayout();
+        final FlexTable table = builder.getTable();
+
+        table.addTableListener(new TableListener()
+        {
+            public void onCellClicked(SourcesTableEvents sender, int row, int cell)
+            {
+                listener.onClick(table);
+            }
+        });
+
+        builder.set(new Image(imageName)).set(text);
+
+        return table;
+    }
+
+    public static Label newButtonGroupSeparator(String styleName)
+    {
+        Label separator = new Label("|");
+        separator.setWidth("16px");
+        separator.getElement().getStyle().setProperty("font-size", "140%");
+        separator.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+
+        separator.setStylePrimaryName("gbk-buttonGroupSeparator");
+
+        if (!StringUtils.isEmpty(styleName))
+            separator.addStyleDependentName(styleName);
+
+        return separator;
+    }
+
+    public static final ScrollPanel newStretchedScrollPanel(Widget widget)
+    {
+        ScrollPanel scrollPanel = new ScrollPanel();
+
+        scrollPanel.setStylePrimaryName("gbk-stretchedScrollPanel");
+        scrollPanel.setSize("100%", "100%");
+
+        if (widget != null)
+            scrollPanel.setWidget(widget);
+
+        return scrollPanel;
     }
 }
