@@ -89,8 +89,6 @@ public class FlexTableBuilder extends HTMLTableBuilder<FlexTableBuilder, FlexTab
         if (colSpan > 1)
             _table.getFlexCellFormatter().setColSpan(_row, _col, colSpan);
 
-        _colSpan = colSpan;
-
         return this;
     }
 }
