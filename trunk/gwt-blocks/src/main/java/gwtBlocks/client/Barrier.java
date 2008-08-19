@@ -13,6 +13,9 @@
 // limitations under the License.
 package gwtBlocks.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.user.client.Command;
 
 /**
@@ -20,20 +23,26 @@ import com.google.gwt.user.client.Command;
  */
 public class Barrier
 {
-    private int     _pendingParties;
-    private Command _proceedTask;
-    private boolean _failed;
+    private int                 _pendingParties;
+    private Command             _proceedTask;
+    private boolean             _failed;
+    private Map<String, Object> _results;
 
     public Barrier(int parties)
     {
         _pendingParties = parties;
     }
-    
+
     public void reset(int parties)
     {
         _pendingParties = parties;
         _proceedTask = null;
         _failed = false;
+    }
+    
+    public void join()
+    {
+        _pendingParties++;
     }
 
     public void arrive()
@@ -48,7 +57,7 @@ public class Barrier
             try
             {
                 proceed();
-                
+
                 if (_proceedTask != null)
                     _proceedTask.execute();
             }
@@ -59,7 +68,20 @@ public class Barrier
         }
     }
 
-    public void onProceed(Command task)
+    public void setResults(String key, Object result)
+    {
+        if (_results == null)
+            _results = new HashMap<String, Object>();
+
+        _results.put(key, result);
+    }
+    
+    protected Map<String, Object> getResults()
+    {
+        return _results;
+    }
+
+    public final void onProceed(Command task)
     {
         if (_pendingParties == 0)
             task.execute();
