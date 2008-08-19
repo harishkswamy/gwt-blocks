@@ -13,6 +13,7 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
+import gwtBlocks.client.ValidationException;
 import gwtBlocks.client.ValueChangeHistoryListener;
 import gwtBlocks.client.ValueChangeListener;
 
@@ -42,6 +43,7 @@ public class BaseModel<V>
     private Set<ValueChangeHistoryListener<? extends BaseModel<V>, V>> _changeHistoryListeners;
     private boolean                                                    _inBatchMode;
     private CompositeModel<?>                                          _parent;
+    private boolean                                                    _autoCommit;
 
     public BaseModel()
     {
@@ -72,6 +74,16 @@ public class BaseModel<V>
         return (P) _parent;
     }
 
+    public void setAutoCommit(boolean autoCommit)
+    {
+        _autoCommit = autoCommit;
+    }
+
+    public boolean isAutoCommit()
+    {
+        return _autoCommit || (_parent != null && _parent.isAutoCommit());
+    }
+
     public void parentValueChanged()
     {
     }
@@ -88,14 +100,48 @@ public class BaseModel<V>
      */
     public void setValue(V value)
     {
+        beforeSetValue();
+
         _oldValue = _value;
         _value = value;
+
+        if (isAutoCommit())
+            commit();
 
         if (_parent != null)
             _parent.childValueChanged(this);
 
         if (!isInBatchMode())
             fireValueChanged();
+
+        afterSetValue();
+    }
+
+    protected void beforeSetValue()
+    {
+
+    }
+
+    protected void afterSetValue()
+    {
+
+    }
+
+    protected void commit()
+    {
+
+    }
+
+    /**
+     * This method will {@link #commit()} if and only if there are no validation errors.
+     * 
+     * @throws ValidationException
+     *             When there are validation errors.
+     */
+    public final void save()
+    {
+        if (!isAutoCommit())
+            commit();
     }
 
     private void fireValueChanged()
@@ -159,16 +205,11 @@ public class BaseModel<V>
         }
     }
 
-    protected boolean isInBatchMode()
+    protected final boolean isInBatchMode()
     {
         return _inBatchMode || (_parent != null && _parent.isInBatchMode());
     }
 
-    protected void save()
-    {
-        
-    }
-    
     public void registerChangeListener(ValueChangeListener<? extends BaseModel<V>> listener)
     {
         if (_changeListeners == null)
