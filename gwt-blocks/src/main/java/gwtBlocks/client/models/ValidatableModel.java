@@ -54,12 +54,21 @@ public class ValidatableModel<V> extends FeedbackModel<V>
     {
         super.beforeNotifyChangeListeners();
 
-        validate();
+        runValidation();
     }
-
-    private void validate()
+    
+    private void runValidation()
     {
         clearMessages();
+        
+        try
+        {
+            validate();
+        }
+        catch (ValidationException e)
+        {
+            addMessage(e.getMessage(), e.getMessageModels());
+        }
 
         if (_validators == null)
             return;
@@ -67,6 +76,13 @@ public class ValidatableModel<V> extends FeedbackModel<V>
         // Validate
         for (Validator<V> validator : _validators)
             validate(validator);
+    }
+
+    /**
+     * Placeholder method to be used by subclasses for validation.
+     */
+    protected void validate()
+    {
     }
 
     private void validate(Validator<V> validator)
