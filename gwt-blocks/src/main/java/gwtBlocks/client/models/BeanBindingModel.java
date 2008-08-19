@@ -13,7 +13,6 @@
 // limitations under the License.
 package gwtBlocks.client.models;
 
-import gwtBlocks.client.ValidationException;
 import gwtBlocks.generators.BindingClass;
 import gwtBlocks.generators.BindingProperty;
 
@@ -23,7 +22,7 @@ import gwtBlocks.generators.BindingProperty;
  * object.
  * <p>
  * This is a buffered model, meaning values stored in this model are not transferred to the domain object until
- * {@link #save()} is called. However, buffering can be turned off by turning auto commit on via
+ * {@link #commit()} is called. However, buffering can be turned off by turning auto commit on via
  * {@link #setAutoCommit(boolean)}.
  * <p>
  * This model is automatically generated based on the conventions outlined below.
@@ -55,34 +54,4 @@ import gwtBlocks.generators.BindingProperty;
  */
 public abstract class BeanBindingModel<V> extends CompositeModel<V>
 {
-    private boolean _autoCommit;
-
-    public void setAutoCommit(boolean autoCommit)
-    {
-        _autoCommit = autoCommit;
-    }
-    
-    @Override
-    public void childValueChanged(BaseModel<?> child)
-    {
-        if (_autoCommit)
-            child.save();
-    }
-
-    /**
-     * This method will {@link #save()} if and only if there are no validation errors.
-     * 
-     * @throws ValidationException
-     *             When there are validation errors.
-     */
-    public void save() throws ValidationException
-    {
-        MessageModel msgModel = getMessageModel();
-
-        if (msgModel != null && msgModel.hasErrors())
-            throw new ValidationException("");
-
-        if (!_autoCommit)
-            super.save();
-    }
 }
