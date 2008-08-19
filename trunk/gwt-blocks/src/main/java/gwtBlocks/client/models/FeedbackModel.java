@@ -70,4 +70,11 @@ public class FeedbackModel<V> extends BaseModel<V>
     {
         return getMessageModel().hasErrors();
     }
+
+    public String getMessages()
+    {
+        MessageModel msgModel = getMessageModel();
+
+        return msgModel == null ? null : msgModel.toString();
+    }
 }
