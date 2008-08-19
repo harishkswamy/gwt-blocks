@@ -53,7 +53,7 @@ import com.google.gwt.user.client.ui.Widget;
 abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTMLTable>
 {
     protected T _table;
-    protected int _row, _col, _colSpan;
+    protected int _row, _col;
     protected boolean _applyRowStyle, _swapRowStyle, _hStretch, _vStretch;
 
     @SuppressWarnings("unchecked")
@@ -77,7 +77,6 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
     {
         _row = row;
         _col = 0;
-        _colSpan = 1;
     }
 
     public B formLayout()
@@ -397,7 +396,7 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
      */
     public B set(Object obj)
     {
-        _table.setText(_row, nextCol(), obj == null ? "" : obj.toString());
+        _table.setText(_row, _col++, obj == null ? "" : obj.toString());
 
         return builder();
     }
@@ -413,7 +412,7 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
         if (_vStretch)
             widget.setHeight("100%");
 
-        _table.setWidget(_row, nextCol(), widget);
+        _table.setWidget(_row, _col++, widget);
 
         return builder();
     }
@@ -423,7 +422,7 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
      */
     public B setHTML(String html)
     {
-        _table.setHTML(_row, nextCol(), html);
+        _table.setHTML(_row, _col++, html);
 
         return builder();
     }
@@ -438,19 +437,9 @@ abstract class HTMLTableBuilder<B extends HTMLTableBuilder<B, T>, T extends HTML
         for (int i = 1; i < spaces; i++)
             b.append("&nbsp;");
 
-        _table.setHTML(_row, nextCol(), b.toString());
+        _table.setHTML(_row, _col++, b.toString());
 
         return builder();
-    }
-
-    private int nextCol()
-    {
-        int col = _col;
-
-        _col += _colSpan;
-        _colSpan = 1;
-
-        return col;
     }
 
     // Row methods ================================================================
