@@ -87,4 +87,23 @@ public class MessageModel extends BaseModel<Map<FeedbackModel<?>, Map<String, Li
 
         return messages;
     }
+
+    @Override
+    public String toString()
+    {
+        Map<FeedbackModel<?>, Map<String, List<FeedbackModel<?>>>> modelMsgMap = getValue();
+
+        if (modelMsgMap == null)
+            return null;
+
+        StringBuffer msgBuf = new StringBuffer();
+
+        for (Map<String, List<FeedbackModel<?>>> msgMap : modelMsgMap.values())
+        {
+            for (String msg : msgMap.keySet())
+                msgBuf.append(msg).append('\n');
+        }
+
+        return msgBuf.toString();
+    }
 }
