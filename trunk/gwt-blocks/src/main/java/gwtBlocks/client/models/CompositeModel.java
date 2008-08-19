@@ -151,10 +151,8 @@ public class CompositeModel<V> extends ValidatableModel<V>
     }
 
     @Override
-    public void setValue(V value)
+    public void afterSetValue()
     {
-        super.setValue(value);
-
         if (_children == null)
             return;
 
@@ -182,12 +180,17 @@ public class CompositeModel<V> extends ValidatableModel<V>
         return _children;
     }
 
-    public void save() throws ValidationException
+    protected void commit()
     {
+        MessageModel msgModel = getMessageModel();
+
+        if (msgModel != null && msgModel.hasErrors())
+            throw new ValidationException("");
+
         if (_children == null)
             return;
 
         for (BaseModel<?> model : _children.values())
-            model.save();
+            model.commit();
     }
 }
