@@ -40,7 +40,7 @@ public abstract class PropertyBindingModel<V> extends InputModel<V>
     /**
      * This method will commit the value in this model to the domain object.
      */
-    public void save()
+    public void commit()
     {
         if (getParent().getValue() != null)
             setPropertyValue();
