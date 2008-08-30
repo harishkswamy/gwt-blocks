@@ -91,7 +91,7 @@ public class PrintManager
 
     public static void print(String[] styles, UIObject obj)
     {
-        print(styles, obj.getElement().toString());
+        print(styles, obj.getElement().getInnerHTML());
     }
 
     private static String buildStyleLinks(String[] styles)
