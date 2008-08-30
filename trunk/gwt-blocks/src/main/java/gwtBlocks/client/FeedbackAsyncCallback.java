@@ -13,6 +13,11 @@
 // limitations under the License.
 package gwtBlocks.client;
 
+import gwtBlocks.client.views.MessageBox;
+import gwtBlocks.shared.rpc.RPCMessageException;
+import gwtBlocks.shared.rpc.RPCServiceException;
+
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -22,10 +27,16 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
 {
     private static ProcessingIndicator _indicator;
     private static int                 _callCount;
+    private static ConstantsWithLookup _rpcMessages;
 
     public static void setProcessingIndicator(ProcessingIndicator indicator)
     {
         _indicator = indicator;
+    }
+
+    public static void setRPCMessages(ConstantsWithLookup rpcMessages)
+    {
+        _rpcMessages = rpcMessages;
     }
 
     private Barrier _barrier;
@@ -64,7 +75,23 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
     public void onFailure(Throwable caught)
     {
         endCall();
-        callFailed(caught);
+
+        try
+        {
+            throw caught;
+        }
+        catch (RPCServiceException e)
+        {
+            handleServiceException(e);
+        }
+        catch (RPCMessageException e)
+        {
+            MessageBox.alert(getMessage(e.getLocalizedMessage()));
+        }
+        catch (Throwable t)
+        {
+            MessageBox.error(GwtBlocksMessages.pick.unhandledError());
+        }
 
         if (_barrier != null)
             _barrier.failed();
@@ -74,7 +101,7 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
     {
         try
         {
-            callPassed(result);
+            handleResult(result);
 
             if (_barrier != null)
                 _barrier.arrive();
@@ -85,7 +112,25 @@ public abstract class FeedbackAsyncCallback<T> implements AsyncCallback<T>
         }
     }
 
-    protected abstract void callPassed(T result);
+    protected abstract void handleResult(T result);
 
-    protected abstract void callFailed(Throwable caught);
+    protected void handleServiceException(RPCServiceException caught)
+    {
+        // 
+    }
+
+    protected String getMessage(String msgCode)
+    {
+        try
+        {
+            if (_rpcMessages != null)
+                return _rpcMessages.getString(msgCode);
+        }
+        catch (Exception e)
+        {
+            // Fall through
+        }
+
+        return msgCode;
+    }
 }
