@@ -22,8 +22,19 @@ import com.google.gwt.i18n.client.Messages;
 public interface GwtBlocksMessages extends Messages
 {
     GwtBlocksMessages pick = GWT.create(GwtBlocksMessages.class);
-    
+
+    @DefaultMessage("Invalid number: \"{0}\"; format: \"{1}\".")
     String invalidNumberFormat(String value, String format);
-    
+
+    @DefaultMessage("There is no registered message model for: \"{0}\" to show message: \"{1}\".")
     String noRegisteredMessageModel(String forModel, String msg);
+
+    @DefaultMessage("Message")
+    String message();
+
+    @DefaultMessage("OK")
+    String ok();
+    
+    @DefaultMessage("An error has occurred on the server. Please report the problem to help desk.")
+    String unhandledError();
 }
