@@ -84,3 +84,29 @@ body.processing {
 	border-right: 1px solid #CCC;
 	border-bottom: 1px solid #CCC;
 }
+
+/* = PNG Styles ====================================================================== */
+
+.gbk-pngContainer {
+	display: inline-block;
+}
+
+.gbk-png {
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=0);
+}
+
+.gbk-infoPng {
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwtBlocks/images/info.png');
+}
+
+.gbk-warningPng {
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwtBlocks/images/warning.png');
+}
+
+.gbk-errorPng {
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwtBlocks/images/error.png');
+}
+
+.gbk-forbiddenPng {
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='gwtBlocks/images/forbidden.png');
+}
